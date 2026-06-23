@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { loginUser } from "@/services/authService";
 import { useAuth } from "@/context/AuthContext";
 
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
@@ -26,21 +29,13 @@ export default function LoginPage() {
         password,
       });
 
-      console.log("LOGIN RESPONSE:", data);
-
       login(data.token);
-
-      alert("Login successful");
 
       router.push("/dashboard");
     } catch (error: any) {
-      console.log("FULL ERROR:", error);
-      console.log("RESPONSE:", error.response?.data);
-      console.log("STATUS:", error.response?.status);
-
       alert(
         error.response?.data?.message ||
-        "Login failed"
+          "Login failed"
       );
     } finally {
       setLoading(false);
@@ -48,43 +43,68 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg"
-      >
-        <h1 className="mb-6 text-center text-3xl font-bold">
-          Login
-        </h1>
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+      <div className="w-full max-w-md">
 
-        <input
-          type="email"
-          placeholder="Enter Email"
-          className="mb-4 w-full rounded-lg border p-3 outline-none focus:border-purple-600"
-          value={email}
-          onChange={(e) =>
-            setEmail(e.target.value)
-          }
-        />
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold">
+            Welcome Back
+          </h1>
 
-        <input
-          type="password"
-          placeholder="Enter Password"
-          className="mb-4 w-full rounded-lg border p-3 outline-none focus:border-purple-600"
-          value={password}
-          onChange={(e) =>
-            setPassword(e.target.value)
-          }
-        />
+          <p className="mt-2 text-gray-500">
+            Login to manage your Student Project Showcase
+          </p>
+        </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-lg bg-purple-600 p-3 text-white transition hover:bg-purple-700 disabled:bg-gray-400"
+        <form
+          onSubmit={handleSubmit}
+          className="rounded-3xl border bg-white p-8 shadow-lg"
         >
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
+          <div className="space-y-5">
+
+            <div>
+              <label className="mb-2 block text-sm font-medium">
+                Email
+              </label>
+
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) =>
+                  setEmail(e.target.value)
+                }
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium">
+                Password
+              </label>
+
+              <Input
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) =>
+                  setPassword(e.target.value)
+                }
+              />
+            </div>
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-purple-600 hover:bg-purple-700"
+            >
+              {loading
+                ? "Logging in..."
+                : "Login"}
+            </Button>
+
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { registerUser } from "@/services/authService";
 
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
 export default function RegisterPage() {
   const router = useRouter();
 
@@ -11,80 +14,122 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
 
     try {
-      const data = await registerUser({
+      setLoading(true);
+
+      await registerUser({
         name,
         email,
         password,
       });
 
-      console.log(data);
-
       alert("Registration successful");
 
       router.push("/login");
     } catch (error: any) {
-      console.log(error.response?.data);
+      console.log(error);
 
       alert(
         error.response?.data?.message ||
-        "Registration failed"
+          "Registration failed"
       );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg"
-      >
-        <h1 className="mb-6 text-center text-3xl font-bold">
-          Register
-        </h1>
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+      <div className="w-full max-w-md">
 
-        <input
-          type="text"
-          placeholder="Enter Name"
-          className="mb-4 w-full rounded-lg border p-3 outline-none focus:border-purple-600"
-          value={name}
-          onChange={(e) =>
-            setName(e.target.value)
-          }
-        />
+        {/* Heading */}
 
-        <input
-          type="email"
-          placeholder="Enter Email"
-          className="mb-4 w-full rounded-lg border p-3 outline-none focus:border-purple-600"
-          value={email}
-          onChange={(e) =>
-            setEmail(e.target.value)
-          }
-        />
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold">
+            Create Account
+          </h1>
 
-        <input
-          type="password"
-          placeholder="Enter Password"
-          className="mb-4 w-full rounded-lg border p-3 outline-none focus:border-purple-600"
-          value={password}
-          onChange={(e) =>
-            setPassword(e.target.value)
-          }
-        />
+          <p className="mt-2 text-gray-500">
+            Register to access the Student Project Showcase Dashboard
+          </p>
+        </div>
 
-        <button
-          type="submit"
-          className="w-full rounded-lg bg-purple-600 p-3 text-white transition hover:bg-purple-700"
+        {/* Form */}
+
+        <form
+          onSubmit={handleSubmit}
+          className="rounded-3xl border bg-white p-8 shadow-lg"
         >
-          Register
-        </button>
-      </form>
+
+          <div className="space-y-5">
+
+            <div>
+              <label className="mb-2 block text-sm font-medium">
+                Full Name
+              </label>
+
+              <Input
+                type="text"
+                placeholder="Enter your full name"
+                value={name}
+                onChange={(e) =>
+                  setName(e.target.value)
+                }
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium">
+                Email
+              </label>
+
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) =>
+                  setEmail(e.target.value)
+                }
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium">
+                Password
+              </label>
+
+              <Input
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) =>
+                  setPassword(e.target.value)
+                }
+              />
+            </div>
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-purple-600 hover:bg-purple-700"
+            >
+              {loading
+                ? "Creating Account..."
+                : "Register"}
+            </Button>
+
+          </div>
+
+        </form>
+
+      </div>
     </div>
   );
 }
