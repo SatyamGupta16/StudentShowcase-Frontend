@@ -1,121 +1,118 @@
-"use client";
+import Navbar from "@/components/layout/Navbar";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
-
-type Product = {
-  _id: string;
-  name: string;
-  image: string;
-};
-
-export default function Home() {
-  const [name, setName] = useState("");
-  const [image, setImage] = useState<File | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
-
-  const API_URL = "http://localhost:27017";
-
-  const fetchProducts = async () => {
-    try {
-      const res = await axios.get(`${API_URL}/api/products`);
-      setProducts(res.data);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-  };
-
-  const saveProduct = async () => {
-    if (!name || !image) {
-      alert("Please enter product name and select image");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("image", image);
-
-    try {
-      await axios.post(`${API_URL}/api/products`, formData);
-
-      alert("Product saved successfully");
-
-      setName("");
-      setImage(null);
-
-      fetchProducts();
-    } catch (error) {
-      console.error("Error saving product:", error);
-      alert("Something went wrong");
-    }
-  };
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
+export default function HomePage() {
   return (
-    <main className="min-h-screen bg-gray-100 p-8">
-      <div className="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow">
-        <h1 className="mb-6 text-3xl font-bold text-gray-800">
-          Product Image Upload
-        </h1>
+    <main>
+      <Navbar />
 
-        <div className="mb-8 rounded-lg border p-4">
-          <h2 className="mb-4 text-xl font-semibold text-gray-700">
-            Add Product
+      <section className="mx-auto flex min-h-[75vh] max-w-7xl items-center justify-between px-6 py-10 lg:px-12">
+
+        {/* Left Content */}
+        <div className="max-w-2xl text-center lg:text-left">
+          <span className="rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-600">
+            🚀 Showcase Your Talent
+          </span>
+
+          <h1 className="mt-6 text-6xl font-bold leading-tight">
+            Turn Your
+            <br />
+            <span className="text-purple-600">
+              Student Projects
+            </span>
+            <br />
+            Into A Portfolio
+          </h1>
+
+          <p className="mt-6 text-lg text-gray-600">
+            Discover amazing student projects, connect with talented
+            developers, and explore innovative ideas from students
+            across different domains.
+          </p>
+
+          <div className="mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
+            <button className="rounded-xl bg-purple-600 px-8 py-4 font-medium text-white transition hover:bg-purple-700">
+              Explore Projects
+            </button>
+
+            <button className="rounded-xl border border-gray-300 px-8 py-4 font-medium transition hover:bg-gray-100">
+              Add Project
+            </button>
+          </div>
+        </div>
+
+
+
+        {/* Right Side */}
+        <div className="relative flex items-center justify-center">
+
+          <div className="h-[450px] w-[350px] rounded-3xl bg-gradient-to-br from-purple-200 to-purple-500 shadow-2xl"></div>
+
+          <div className="absolute -left-10 top-10 rounded-2xl bg-white p-4 shadow-xl">
+            <h4 className="font-semibold">Student</h4>
+            <p className="text-sm text-gray-500">B.Tech CSE</p>
+          </div>
+
+          <div className="absolute -right-8 bottom-16 rounded-2xl bg-white p-4 shadow-xl">
+            <h4 className="font-semibold">12 Projects</h4>
+            <p className="text-sm text-gray-500">Completed</p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <section className="mx-auto max-w-6xl py-16">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-purple-600">500+</h2>
+            <p>Projects</p>
+          </div>
+
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-purple-600">200+</h2>
+            <p>Students</p>
+          </div>
+
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-purple-600">50+</h2>
+            <p>Technologies</p>
+          </div>
+
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-purple-600">20+</h2>
+            <p>Categories</p>
+          </div>
+
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-20">
+        <div className="mb-10 flex items-center justify-between">
+          <h2 className="text-4xl font-bold">
+            Featured Projects
           </h2>
 
-          <input
-            type="text"
-            placeholder="Enter product name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mb-4 w-full rounded border px-4 py-2 text-black outline-none"
-          />
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setImage(e.target.files?.[0] || null)}
-            className="mb-4 w-full rounded border px-4 py-2 text-black"
-          />
-
-          <button
-            onClick={saveProduct}
-            className="rounded bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
-          >
-            Save Product
+          <button className="text-purple-600">
+            View All →
           </button>
         </div>
 
-        <h2 className="mb-4 text-xl font-semibold text-gray-700">
-          Product List
-        </h2>
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          {/* Card 1 */}
+          <div className="rounded-3xl bg-white p-5 shadow-lg transition hover:-translate-y-2">
+            <div className="mb-4 h-40 rounded-2xl bg-purple-100"></div>
 
-        {products.length === 0 ? (
-          <p className="text-gray-500">No products found</p>
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-            {products.map((product) => (
-              <div
-                key={product._id}
-                className="rounded-lg border bg-white p-4 shadow-sm"
-              >
-                <img
-                  src={`${API_URL}/uploads/${product.image}`}
-                  alt={product.name}
-                  className="mb-3 h-40 w-full rounded object-cover"
-                />
+            <h3 className="font-bold">
+              AI Healthcare Predictor
+            </h3>
 
-                <h3 className="text-lg font-semibold text-gray-800">
-                  {product.name}
-                </h3>
-              </div>
-            ))}
+            <p className="mt-2 text-sm text-gray-500">
+              Next.js • FastAPI • ML
+            </p>
           </div>
-        )}
-      </div>
+        </div>
+      </section>
     </main>
   );
 }
