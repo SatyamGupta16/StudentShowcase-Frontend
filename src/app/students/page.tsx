@@ -1,22 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getStudents } from "@/services/studentService";
-
+import { useRouter } from "next/navigation";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-import { Card, CardContent } from "@/components/ui/card";
-
-import { Button } from "@/components/ui/button";
+  getAllStudents,
+  deleteStudent,
+} from "@/services/studentService";
 
 export default function StudentsPage() {
+  const router = useRouter();
+
   const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,83 +19,151 @@ export default function StudentsPage() {
 
   const fetchStudents = async () => {
     try {
-      const data = await getStudents();
+      const data = await getAllStudents();
+
+      console.log(
+        "Students API Response:",
+        data
+      );
+
       setStudents(data);
     } catch (error) {
-      console.error(error);
+      console.error(
+        "Students Error:",
+        error
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  const handleDelete = async (
+    id: string
+  ) => {
+    const confirmDelete =
+      window.confirm(
+        "Are you sure you want to delete this student?"
+      );
+
+    if (!confirmDelete) return;
+
+    try {
+      await deleteStudent(id);
+
+      alert(
+        "Student deleted successfully"
+      );
+
+      fetchStudents();
+    } catch (error) {
+      console.error(
+        "Delete Error:",
+        error
+      );
+
+      alert(
+        "Failed to delete student"
+      );
+    }
+  };
+
   if (loading) {
     return (
-      <div className="p-8">
-        Loading students...
+      <div className="flex justify-center items-center h-screen">
+        Loading Students...
       </div>
     );
   }
 
   return (
-    <div className="p-8">
+    <div className="mx-auto max-w-7xl p-8">
+      <h1 className="mb-8 text-4xl font-bold">
+        Students
+      </h1>
 
-      <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-4xl font-bold">
-          Students
-        </h1>
+      <div className="overflow-hidden rounded-2xl bg-white shadow">
+        <table className="w-full">
+          <thead className="bg-purple-600 text-white">
+            <tr>
+              <th className="p-4 text-left">
+                Name
+              </th>
+              <th className="p-4 text-left">
+                Email
+              </th>
+              <th className="p-4 text-left">
+                Batch
+              </th>
+              <th className="p-4 text-left">
+                Featured
+              </th>
+              <th className="p-4 text-left">
+                Actions
+              </th>
+            </tr>
+          </thead>
 
-        <Button>
-          Add Student
-        </Button>
-      </div>
-
-      <Card>
-        <CardContent className="pt-6">
-
-          <Table>
-
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Batch</TableHead>
-                <TableHead>Featured</TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-
-              {students.map((student) => (
-                <TableRow key={student._id}>
-
-                  <TableCell>
+          <tbody>
+            {students.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={5}
+                  className="p-10 text-center text-gray-500"
+                >
+                  No students found.
+                </td>
+              </tr>
+            ) : (
+              students.map((student) => (
+                <tr
+                  key={student._id}
+                  className="border-b"
+                >
+                  <td className="p-4">
                     {student.name}
-                  </TableCell>
+                  </td>
 
-                  <TableCell>
+                  <td className="p-4">
                     {student.email}
-                  </TableCell>
+                  </td>
 
-                  <TableCell>
+                  <td className="p-4">
                     {student.batch}
-                  </TableCell>
+                  </td>
 
-                  <TableCell>
+                  <td className="p-4">
                     {student.isFeatured
                       ? "Yes"
                       : "No"}
-                  </TableCell>
+                  </td>
 
-                </TableRow>
-              ))}
+                  <td className="p-4 flex gap-2">
+                    <button
+                      onClick={() =>
+                        router.push(
+                          `/students/${student._id}`
+                        )
+                      }
+                      className="rounded-lg bg-blue-600 px-3 py-2 text-white hover:bg-blue-700"
+                    >
+                      Edit
+                    </button>
 
-            </TableBody>
-
-          </Table>
-
-        </CardContent>
-      </Card>
-
+                    <button
+                      onClick={() =>
+                        handleDelete(student._id)
+                      }
+                      className="rounded-lg bg-red-600 px-3 py-2 text-white hover:bg-red-700"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

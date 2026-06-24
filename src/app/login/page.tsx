@@ -24,15 +24,27 @@ export default function LoginPage() {
     try {
       setLoading(true);
 
-      const data = await loginUser({
-        email,
-        password,
-      });
+const data = await loginUser({
+  email,
+  password,
+});
 
-      login(data.token);
+console.log("LOGIN RESPONSE:", data);
+console.log("TOKEN FROM API:", data.token);
 
-      router.push("/dashboard");
+login(data.token);
+
+console.log(
+  "TOKEN AFTER SAVE:",
+  localStorage.getItem("token")
+);
+
+router.push("/dashboard");
     } catch (error: any) {
+      console.log("FULL ERROR:", error);
+      console.log("RESPONSE:", error.response?.data);
+      console.log("STATUS:", error.response?.status);
+
       alert(
         error.response?.data?.message ||
           "Login failed"
