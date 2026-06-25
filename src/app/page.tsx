@@ -53,6 +53,13 @@ export default function HomePage() {
   const visibleProjects =
     featuredProjects.length > 0 ? featuredProjects : projects.slice(0, 4);
 
+  const featuredCreations = products
+    .filter((product) => product.isFeatured)
+    .slice(0, 4);
+
+  const visibleCreations =
+    featuredCreations.length > 0 ? featuredCreations : products.slice(0, 4);
+
   const getProjectImageUrl = (screenshot: string) => {
     if (!screenshot) return "";
 
@@ -110,9 +117,9 @@ export default function HomePage() {
           </h1>
 
           <p className="mt-6 text-lg text-gray-600">
-            Empowering students with practical coding skills, real-world projects,
-            and portfolio-ready experience to prepare them for internships,
-            hackathons, and future tech careers.
+            Empowering students with practical coding skills, real-world
+            projects, and portfolio-ready experience to prepare them for
+            internships, hackathons, and future tech careers.
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
@@ -205,7 +212,7 @@ export default function HomePage() {
             <h2 className="text-4xl font-bold text-purple-600">
               {products.length}
             </h2>
-            <p className="mt-2 text-gray-600">Products</p>
+            <p className="mt-2 text-gray-600">Creations</p>
           </div>
 
           <div className="rounded-2xl bg-white p-6 text-center shadow">
@@ -220,7 +227,7 @@ export default function HomePage() {
           <h2 className="text-4xl font-bold">Featured Projects</h2>
 
           <button
-            onClick={() => router.push("/projects")}
+            onClick={() => router.push("/showcase/projects")}
             className="font-medium text-purple-600 hover:underline"
           >
             View All →
@@ -280,7 +287,9 @@ export default function HomePage() {
                   )}
 
                   <button
-                    onClick={() => router.push(`/showcase/projects/${project._id}`)}
+                    onClick={() =>
+                      router.push(`/showcase/projects/${project._id}`)
+                    }
                     className="mt-4 rounded-lg bg-purple-600 px-4 py-2 text-sm text-white transition hover:bg-purple-700"
                   >
                     View Project
@@ -294,7 +303,7 @@ export default function HomePage() {
 
       <section className="mx-auto max-w-7xl px-6 pb-20">
         <div className="mb-10 flex items-center justify-between">
-          <h2 className="text-4xl font-bold">Featured Products</h2>
+          <h2 className="text-4xl font-bold">Featured Creations</h2>
 
           <button
             onClick={() => router.push("/showcase/products")}
@@ -304,13 +313,17 @@ export default function HomePage() {
           </button>
         </div>
 
-        {products.length === 0 ? (
+        {loading ? (
           <div className="rounded-2xl bg-white p-10 text-center shadow">
-            <p className="text-gray-500">No products found.</p>
+            Loading featured creations...
+          </div>
+        ) : visibleCreations.length === 0 ? (
+          <div className="rounded-2xl bg-white p-10 text-center shadow">
+            <p className="text-gray-500">No creations found.</p>
           </div>
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {products.slice(0, 4).map((product) => (
+            {visibleCreations.map((product) => (
               <div
                 key={product._id}
                 className="overflow-hidden rounded-3xl bg-white shadow-lg transition hover:-translate-y-2 hover:shadow-xl"
@@ -324,12 +337,12 @@ export default function HomePage() {
                     className="h-40 w-full object-cover"
                     onError={(e) => {
                       e.currentTarget.src =
-                        "https://placehold.co/600x400?text=No+Image";
+                        "https://placehold.co/600x400?text=No+Creation";
                     }}
                   />
                 ) : (
                   <div className="flex h-40 items-center justify-center bg-green-100 text-gray-400">
-                    No Image
+                    No Creation Thumbnail
                   </div>
                 )}
 
@@ -346,15 +359,19 @@ export default function HomePage() {
                     {product.description || "No description added"}
                   </p>
 
-                  <p className="mt-3 font-semibold text-green-600">
-                    {product.price ? `₹${product.price}` : "Price not added"}
-                  </p>
+                  {product.category && (
+                    <p className="mt-3 text-sm font-semibold text-green-600">
+                      {product.category}
+                    </p>
+                  )}
 
                   <button
-                    onClick={() => router.push(`/showcase/products/${product._id}`)}
+                    onClick={() =>
+                      router.push(`/showcase/products/${product._id}`)
+                    }
                     className="mt-4 rounded-lg bg-green-600 px-4 py-2 text-sm text-white transition hover:bg-green-700"
                   >
-                    View Product
+                    View Creation
                   </button>
                 </div>
               </div>

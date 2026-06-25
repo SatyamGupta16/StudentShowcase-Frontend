@@ -123,7 +123,8 @@ export default function DashboardPage() {
               </h1>
 
               <p className="mt-2 text-muted-foreground">
-                Manage students, projects, products and featured showcase content.
+                Manage students, projects, creations and featured showcase
+                content.
               </p>
             </div>
 
@@ -190,7 +191,7 @@ export default function DashboardPage() {
             >
               <CardHeader>
                 <CardTitle className="text-gray-500">
-                  Total Products
+                  Total Creations
                 </CardTitle>
               </CardHeader>
 
@@ -200,7 +201,7 @@ export default function DashboardPage() {
                 </h2>
 
                 <p className="mt-2 text-sm text-gray-500">
-                  {stats.featuredProducts} featured products
+                  {stats.featuredProducts} featured creations
                 </p>
               </CardContent>
             </Card>
@@ -252,14 +253,14 @@ export default function DashboardPage() {
                 className="bg-green-600 hover:bg-green-700"
                 onClick={() => router.push("/products/create")}
               >
-                Add Product
+                Add Creation
               </Button>
 
               <Button
                 variant="outline"
                 onClick={() => router.push("/products")}
               >
-                View Products
+                View Creations
               </Button>
             </div>
           </div>
@@ -337,12 +338,12 @@ export default function DashboardPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Recent Products</CardTitle>
+                <CardTitle>Recent Creations</CardTitle>
               </CardHeader>
 
               <CardContent className="space-y-4">
                 {recentProducts.length === 0 ? (
-                  <p className="text-gray-500">No products found</p>
+                  <p className="text-gray-500">No creations found</p>
                 ) : (
                   recentProducts.map((product) => (
                     <button
@@ -357,12 +358,12 @@ export default function DashboardPage() {
                           </h3>
 
                           <p className="mt-1 text-sm text-gray-500">
-                            {product.category || "No category"}
+                            {product.category || "No type added"}
                           </p>
                         </div>
 
                         <span className="rounded-full bg-green-100 px-3 py-1 text-sm text-green-600">
-                          {product.price ? `₹${product.price}` : "N/A"}
+                          {product.price ? `₹${product.price}` : "Portfolio"}
                         </span>
                       </div>
 

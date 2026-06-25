@@ -67,7 +67,7 @@ export default function Navbar() {
             href="/showcase/products"
             className="transition hover:text-purple-600"
           >
-            Products
+            Creations
           </Link>
 
           {isLoggedIn ? (
@@ -138,7 +138,7 @@ export default function Navbar() {
               onClick={closeMenu}
               className="transition hover:text-purple-600"
             >
-              Products
+              Creations
             </Link>
 
             {isLoggedIn ? (

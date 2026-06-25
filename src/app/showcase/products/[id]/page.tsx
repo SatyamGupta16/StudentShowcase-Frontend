@@ -39,12 +39,12 @@ export default function PublicProductDetailPage() {
     try {
       const data = await getProductById(productId);
 
-      console.log("PUBLIC PRODUCT DETAIL:", data);
+      console.log("PUBLIC CREATION DETAIL:", data);
 
       setProduct(data);
     } catch (error) {
-      console.error("PUBLIC PRODUCT DETAIL ERROR:", error);
-      alert("Failed to load product");
+      console.error("PUBLIC CREATION DETAIL ERROR:", error);
+      alert("Failed to load creation");
     } finally {
       setLoading(false);
     }
@@ -60,7 +60,7 @@ export default function PublicProductDetailPage() {
         <Navbar />
 
         <div className="flex min-h-[70vh] items-center justify-center text-lg font-semibold">
-          Loading Product...
+          Loading Creation...
         </div>
       </main>
     );
@@ -72,7 +72,7 @@ export default function PublicProductDetailPage() {
         <Navbar />
 
         <div className="flex min-h-[70vh] items-center justify-center text-lg font-semibold">
-          Product not found
+          Creation not found
         </div>
       </main>
     );
@@ -87,7 +87,7 @@ export default function PublicProductDetailPage() {
           onClick={() => router.push("/showcase/products")}
           className="mb-8 rounded-lg border px-4 py-2 text-sm transition hover:bg-white"
         >
-          ← Back to Products
+          ← Back to Creations
         </button>
 
         <div className="grid gap-8 rounded-3xl bg-white p-8 shadow lg:grid-cols-2">
@@ -101,12 +101,12 @@ export default function PublicProductDetailPage() {
                 className="h-[420px] w-full object-contain"
                 onError={(e) => {
                   e.currentTarget.src =
-                    "https://placehold.co/800x600?text=No+Image";
+                    "https://placehold.co/800x600?text=No+Creation";
                 }}
               />
             ) : (
               <div className="flex h-[420px] items-center justify-center text-gray-400">
-                No Image
+                No Creation Thumbnail
               </div>
             )}
           </div>
@@ -114,7 +114,7 @@ export default function PublicProductDetailPage() {
           <div className="flex flex-col justify-center">
             {product.isFeatured && (
               <span className="mb-4 w-fit rounded-full bg-yellow-100 px-4 py-2 text-sm font-semibold text-yellow-700">
-                ⭐ Featured Product
+                ⭐ Featured Creation
               </span>
             )}
 
@@ -129,19 +129,19 @@ export default function PublicProductDetailPage() {
             <div className="mt-8 space-y-4 rounded-2xl bg-slate-50 p-6">
               <p className="text-lg">
                 <span className="font-semibold text-gray-900">
-                  Price:
+                  Type:
                 </span>{" "}
-                <span className="font-bold text-green-600">
-                  {product.price ? `₹${product.price}` : "Price not added"}
+                <span className="text-gray-600">
+                  {product.category || "Not added"}
                 </span>
               </p>
 
               <p className="text-lg">
                 <span className="font-semibold text-gray-900">
-                  Category:
+                  Showcase Value:
                 </span>{" "}
-                <span className="text-gray-600">
-                  {product.category || "Not added"}
+                <span className="font-bold text-green-600">
+                  {product.price ? `₹${product.price}` : "Portfolio item"}
                 </span>
               </p>
             </div>
@@ -151,7 +151,7 @@ export default function PublicProductDetailPage() {
                 onClick={() => router.push("/showcase/products")}
                 className="rounded-lg bg-green-600 px-6 py-3 text-white transition hover:bg-green-700"
               >
-                Explore More Products
+                Explore More Creations
               </button>
 
               <button

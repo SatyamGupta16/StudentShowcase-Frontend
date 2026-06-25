@@ -57,11 +57,11 @@ export default function ShowcaseProductsPage() {
     try {
       const data = await getAllProducts();
 
-      console.log("SHOWCASE PRODUCTS:", data);
+      console.log("SHOWCASE CREATIONS:", data);
 
       setProducts(data);
     } catch (error) {
-      console.error("SHOWCASE PRODUCTS ERROR:", error);
+      console.error("SHOWCASE CREATIONS ERROR:", error);
     } finally {
       setLoading(false);
     }
@@ -77,7 +77,7 @@ export default function ShowcaseProductsPage() {
         <Navbar />
 
         <div className="flex min-h-[70vh] items-center justify-center text-lg font-semibold">
-          Loading Products...
+          Loading Creations...
         </div>
       </main>
     );
@@ -90,23 +90,23 @@ export default function ShowcaseProductsPage() {
       <section className="mx-auto max-w-7xl px-6 py-16">
         <div className="mb-12 text-center">
           <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-600">
-            🛒 Product Showcase
+            💡 Student Creations
           </span>
 
           <h1 className="mt-6 text-5xl font-bold">
-            Explore Student Products
+            Explore Student Creations
           </h1>
 
           <p className="mx-auto mt-4 max-w-2xl text-gray-600">
-            Discover products, prototypes, and creative builds uploaded by
-            students as part of their project showcase.
+            Discover creative builds, prototypes, tools, apps, and portfolio
+            work uploaded by students as part of their learning journey.
           </p>
         </div>
 
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap items-center gap-3">
             <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700">
-              {filteredProducts.length} / {products.length} Products
+              {filteredProducts.length} / {products.length} Creations
             </span>
 
             {searchQuery && (
@@ -130,7 +130,7 @@ export default function ShowcaseProductsPage() {
         <div className="mb-10 rounded-2xl bg-white p-4 shadow">
           <input
             type="text"
-            placeholder="Search products by name, category, description..."
+            placeholder="Search creations by name, category, description..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full rounded-xl border px-4 py-3 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
@@ -141,8 +141,8 @@ export default function ShowcaseProductsPage() {
           <div className="rounded-2xl bg-white p-12 text-center shadow">
             <p className="text-gray-500">
               {searchQuery
-                ? "No products matched your search."
-                : "No products found."}
+                ? "No creations matched your search."
+                : "No creations found."}
             </p>
           </div>
         ) : (
@@ -161,12 +161,12 @@ export default function ShowcaseProductsPage() {
                     className="h-56 w-full bg-slate-100 object-contain"
                     onError={(e) => {
                       e.currentTarget.src =
-                        "https://placehold.co/600x400?text=No+Image";
+                        "https://placehold.co/600x400?text=No+Creation";
                     }}
                   />
                 ) : (
                   <div className="flex h-56 items-center justify-center bg-green-100 text-gray-400">
-                    No Image
+                    No Creation Thumbnail
                   </div>
                 )}
 
@@ -185,14 +185,21 @@ export default function ShowcaseProductsPage() {
 
                   <div className="mt-5 rounded-2xl bg-slate-50 p-4">
                     <p className="text-sm text-gray-600">
-                      <span className="font-semibold">Price:</span>{" "}
-                      {product.price ? `₹${product.price}` : "Price not added"}
-                    </p>
-
-                    <p className="mt-2 text-sm text-gray-600">
-                      <span className="font-semibold">Category:</span>{" "}
+                      <span className="font-semibold">Type:</span>{" "}
                       {product.category || "Not added"}
                     </p>
+
+                    {product.price ? (
+                      <p className="mt-2 text-sm text-gray-600">
+                        <span className="font-semibold">Estimated Value:</span>{" "}
+                        ₹{product.price}
+                      </p>
+                    ) : (
+                      <p className="mt-2 text-sm text-gray-600">
+                        <span className="font-semibold">Value:</span> Showcase
+                        item
+                      </p>
+                    )}
                   </div>
 
                   <button
@@ -201,7 +208,7 @@ export default function ShowcaseProductsPage() {
                     }
                     className="mt-5 rounded-lg bg-green-600 px-4 py-2 text-sm text-white transition hover:bg-green-700"
                   >
-                    View Product
+                    View Creation
                   </button>
                 </div>
               </div>

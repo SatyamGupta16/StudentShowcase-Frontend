@@ -70,12 +70,12 @@ export default function CreateProductPage() {
 
       await createProduct(productData);
 
-      alert("Product created successfully");
+      alert("Creation created successfully");
 
       router.push("/products");
     } catch (error) {
-      console.error("CREATE PRODUCT ERROR:", error);
-      alert("Failed to create product");
+      console.error("CREATE CREATION ERROR:", error);
+      alert("Failed to create creation");
     } finally {
       setLoading(false);
     }
@@ -86,7 +86,7 @@ export default function CreateProductPage() {
       <div className="mx-auto max-w-3xl p-8">
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-4xl font-bold">
-            Create Product
+            Create Creation
           </h1>
 
           <button
@@ -105,7 +105,7 @@ export default function CreateProductPage() {
           <input
             type="text"
             name="name"
-            placeholder="Product Name"
+            placeholder="Creation Name"
             value={formData.name}
             onChange={handleChange}
             className="w-full rounded-lg border p-3"
@@ -114,7 +114,7 @@ export default function CreateProductPage() {
 
           <textarea
             name="description"
-            placeholder="Product Description"
+            placeholder="Creation Description"
             value={formData.description}
             onChange={handleChange}
             className="w-full rounded-lg border p-3"
@@ -124,7 +124,7 @@ export default function CreateProductPage() {
           <input
             type="number"
             name="price"
-            placeholder="Price"
+            placeholder="Showcase Value (optional)"
             value={formData.price}
             onChange={handleChange}
             className="w-full rounded-lg border p-3"
@@ -133,7 +133,7 @@ export default function CreateProductPage() {
           <input
             type="text"
             name="category"
-            placeholder="Category"
+            placeholder="Type e.g. Web App, Prototype, Tool, Design"
             value={formData.category}
             onChange={handleChange}
             className="w-full rounded-lg border p-3"
@@ -141,7 +141,7 @@ export default function CreateProductPage() {
 
           <div>
             <label className="mb-2 block font-medium">
-              Product Image
+              Creation Thumbnail
             </label>
 
             <input
@@ -158,7 +158,7 @@ export default function CreateProductPage() {
               checked={formData.isFeatured}
               onChange={handleCheckbox}
             />
-            Featured Product
+            Featured Creation
           </label>
 
           <button
@@ -166,7 +166,7 @@ export default function CreateProductPage() {
             disabled={loading}
             className="w-full rounded-lg bg-purple-600 py-3 text-white transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading ? "Creating..." : "Create Product"}
+            {loading ? "Creating..." : "Create Creation"}
           </button>
         </form>
       </div>

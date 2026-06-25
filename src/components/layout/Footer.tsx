@@ -11,7 +11,7 @@ export default function Footer() {
             </h2>
 
             <p className="mt-3 max-w-sm text-sm leading-6 text-gray-600">
-              A platform where students can showcase their projects, products,
+              A platform where students can showcase their projects, creations,
               skills, and portfolio work in one place.
             </p>
           </div>
@@ -44,7 +44,7 @@ export default function Footer() {
                 href="/showcase/products"
                 className="transition hover:text-purple-600"
               >
-                Products
+                Creations
               </Link>
             </div>
           </div>

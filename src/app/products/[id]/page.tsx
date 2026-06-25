@@ -61,8 +61,8 @@ export default function EditProductPage() {
 
       setPreviewImage(data.image || "");
     } catch (error) {
-      console.error("FETCH PRODUCT ERROR:", error);
-      alert("Failed to load product");
+      console.error("FETCH CREATION ERROR:", error);
+      alert("Failed to load creation");
     } finally {
       setLoading(false);
     }
@@ -123,12 +123,12 @@ export default function EditProductPage() {
 
       await updateProduct(productId, productData);
 
-      alert("Product updated successfully");
+      alert("Creation updated successfully");
 
       router.push("/products");
     } catch (error) {
-      console.error("UPDATE PRODUCT ERROR:", error);
-      alert("Failed to update product");
+      console.error("UPDATE CREATION ERROR:", error);
+      alert("Failed to update creation");
     } finally {
       setUpdating(false);
     }
@@ -138,7 +138,7 @@ export default function EditProductPage() {
     return (
       <AdminGuard>
         <div className="flex h-screen items-center justify-center text-lg font-semibold">
-          Loading Product...
+          Loading Creation...
         </div>
       </AdminGuard>
     );
@@ -149,7 +149,7 @@ export default function EditProductPage() {
       <div className="mx-auto max-w-3xl p-8">
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-4xl font-bold">
-            Edit Product
+            Edit Creation
           </h1>
 
           <button
@@ -172,7 +172,7 @@ export default function EditProductPage() {
                   ? previewImage
                   : getProductImageUrl(previewImage)
               }
-              alt="Product Preview"
+              alt="Creation Preview"
               width={800}
               height={400}
               unoptimized={previewImage.startsWith("blob:")}
@@ -183,7 +183,7 @@ export default function EditProductPage() {
           <input
             type="text"
             name="name"
-            placeholder="Product Name"
+            placeholder="Creation Name"
             value={formData.name}
             onChange={handleChange}
             className="w-full rounded-lg border p-3"
@@ -192,7 +192,7 @@ export default function EditProductPage() {
 
           <textarea
             name="description"
-            placeholder="Product Description"
+            placeholder="Creation Description"
             value={formData.description}
             onChange={handleChange}
             className="w-full rounded-lg border p-3"
@@ -202,7 +202,7 @@ export default function EditProductPage() {
           <input
             type="number"
             name="price"
-            placeholder="Price"
+            placeholder="Showcase Value (optional)"
             value={formData.price}
             onChange={handleChange}
             className="w-full rounded-lg border p-3"
@@ -211,7 +211,7 @@ export default function EditProductPage() {
           <input
             type="text"
             name="category"
-            placeholder="Category"
+            placeholder="Type e.g. Web App, Prototype, Tool, Design"
             value={formData.category}
             onChange={handleChange}
             className="w-full rounded-lg border p-3"
@@ -219,7 +219,7 @@ export default function EditProductPage() {
 
           <div>
             <label className="mb-2 block font-medium">
-              Change Product Image
+              Change Creation Thumbnail
             </label>
 
             <input
@@ -236,7 +236,7 @@ export default function EditProductPage() {
               checked={formData.isFeatured}
               onChange={handleCheckbox}
             />
-            Featured Product
+            Featured Creation
           </label>
 
           <div className="flex gap-4">
@@ -245,7 +245,7 @@ export default function EditProductPage() {
               disabled={updating}
               className="rounded-lg bg-blue-600 px-6 py-3 text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {updating ? "Updating..." : "Update Product"}
+              {updating ? "Updating..." : "Update Creation"}
             </button>
 
             <button
