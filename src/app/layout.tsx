@@ -29,7 +29,6 @@ export const metadata: Metadata = {
   verification: {
     google: "7JZcNrJBWCYRZOGL3T0Q4CNA_YBrTt7TjKB8yADw-9w",
   },
-
   description:
     "A full-stack student project showcase platform where students can display their projects, portfolios, skills, creative work, and achievements in one place.",
 
