@@ -1,7 +1,9 @@
 "use client";
 
+import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+
 import { registerUser } from "@/services/authService";
 
 import { Input } from "@/components/ui/input";
@@ -33,13 +35,19 @@ export default function RegisterPage() {
       alert("Registration successful");
 
       router.push("/login");
-    } catch (error: any) {
-      console.log(error);
+    } catch (error: unknown) {
+      console.log("REGISTER ERROR:", error);
 
-      alert(
-        error.response?.data?.message ||
-          "Registration failed"
-      );
+      if (axios.isAxiosError(error)) {
+        alert(
+          error.response?.data?.message ||
+            "Registration failed"
+        );
+      } else if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("Registration failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -48,9 +56,7 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-md">
-
         {/* Heading */}
-
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold">
             Create Account
@@ -62,14 +68,11 @@ export default function RegisterPage() {
         </div>
 
         {/* Form */}
-
         <form
           onSubmit={handleSubmit}
           className="rounded-3xl border bg-white p-8 shadow-lg"
         >
-
           <div className="space-y-5">
-
             <div>
               <label className="mb-2 block text-sm font-medium">
                 Full Name
@@ -82,6 +85,7 @@ export default function RegisterPage() {
                 onChange={(e) =>
                   setName(e.target.value)
                 }
+                required
               />
             </div>
 
@@ -97,6 +101,7 @@ export default function RegisterPage() {
                 onChange={(e) =>
                   setEmail(e.target.value)
                 }
+                required
               />
             </div>
 
@@ -112,6 +117,7 @@ export default function RegisterPage() {
                 onChange={(e) =>
                   setPassword(e.target.value)
                 }
+                required
               />
             </div>
 
@@ -120,15 +126,10 @@ export default function RegisterPage() {
               disabled={loading}
               className="w-full bg-purple-600 hover:bg-purple-700"
             >
-              {loading
-                ? "Creating Account..."
-                : "Register"}
+              {loading ? "Creating Account..." : "Register"}
             </Button>
-
           </div>
-
         </form>
-
       </div>
     </div>
   );

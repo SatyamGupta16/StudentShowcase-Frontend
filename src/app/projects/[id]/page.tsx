@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import {
@@ -11,6 +11,8 @@ import {
 export default function EditProjectPage() {
   const params = useParams();
   const router = useRouter();
+
+  const projectId = params.id as string;
 
   const [loading, setLoading] = useState(true);
 
@@ -23,30 +25,21 @@ export default function EditProjectPage() {
     isFeatured: false,
   });
 
-  useEffect(() => {
-    fetchProject();
-  }, []);
-
-  const fetchProject = async () => {
+  const fetchProject = useCallback(async () => {
     try {
-      const data = await getProjectById(
-        params.id as string
-      );
+      const data = await getProjectById(projectId);
 
       console.log("PROJECT:", data);
 
       setFormData({
         title: data.title || "",
-        description:
-          data.description || "",
-        techStack:
-          data.techStack?.join(", ") || "",
-        githubUrl:
-          data.githubUrl || "",
-        liveDemoUrl:
-          data.liveDemoUrl || "",
-        isFeatured:
-          data.isFeatured || false,
+        description: data.description || "",
+        techStack: Array.isArray(data.techStack)
+          ? data.techStack.join(", ")
+          : data.techStack || "",
+        githubUrl: data.githubUrl || "",
+        liveDemoUrl: data.liveDemoUrl || "",
+        isFeatured: data.isFeatured || false,
       });
     } catch (error) {
       console.error(error);
@@ -54,13 +47,14 @@ export default function EditProjectPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId]);
+
+  useEffect(() => {
+    fetchProject();
+  }, [fetchProject]);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement |
-      HTMLTextAreaElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
 
@@ -85,30 +79,21 @@ export default function EditProjectPage() {
     e.preventDefault();
 
     try {
-      await updateProject(
-        params.id as string,
-        {
-          ...formData,
-          techStack:
-            formData.techStack
-              .split(",")
-              .map((tech) =>
-                tech.trim()
-              ),
-        }
-      );
+      await updateProject(projectId, {
+        ...formData,
+        techStack: formData.techStack
+          .split(",")
+          .map((tech) => tech.trim())
+          .filter(Boolean),
+      });
 
-      alert(
-        "Project updated successfully"
-      );
+      alert("Project updated successfully");
 
       router.push("/projects");
     } catch (error) {
       console.error(error);
 
-      alert(
-        "Failed to update project"
-      );
+      alert("Failed to update project");
     }
   };
 
@@ -185,7 +170,6 @@ export default function EditProjectPage() {
             checked={formData.isFeatured}
             onChange={handleCheckbox}
           />
-
           Featured Project
         </label>
 

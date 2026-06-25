@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -8,35 +9,41 @@ import { getAllStudents } from "@/services/studentService";
 import { getAllProjects } from "@/services/projectService";
 import { getAllProducts } from "@/services/productService";
 
+import { Student } from "@/types/student";
+import { Project } from "@/types/project";
+import { Product } from "@/types/product";
+
+const BACKEND_URL = "http://localhost:27017";
+
 export default function HomePage() {
   const router = useRouter();
 
-  const [students, setStudents] = useState<any[]>([]);
-  const [projects, setProjects] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchHomeData = async () => {
+      try {
+        const [studentsData, projectsData, productsData] = await Promise.all([
+          getAllStudents(),
+          getAllProjects(),
+          getAllProducts(),
+        ]);
+
+        setStudents(studentsData);
+        setProjects(projectsData);
+        setProducts(productsData);
+      } catch (error) {
+        console.error("HOME PAGE DATA ERROR:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchHomeData();
   }, []);
-
-  const fetchHomeData = async () => {
-    try {
-      const [studentsData, projectsData, productsData] = await Promise.all([
-        getAllStudents(),
-        getAllProjects(),
-        getAllProducts(),
-      ]);
-
-      setStudents(studentsData);
-      setProjects(projectsData);
-      setProducts(productsData);
-    } catch (error) {
-      console.error("HOME PAGE DATA ERROR:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const featuredProjects = projects
     .filter((project) => project.isFeatured)
@@ -45,13 +52,49 @@ export default function HomePage() {
   const visibleProjects =
     featuredProjects.length > 0 ? featuredProjects : projects.slice(0, 4);
 
+  const getProjectImageUrl = (screenshot: string) => {
+    if (!screenshot) return "";
+
+    if (screenshot.startsWith("http")) {
+      return screenshot;
+    }
+
+    if (screenshot.startsWith("/uploads")) {
+      return `${BACKEND_URL}${screenshot}`;
+    }
+
+    return `${BACKEND_URL}/uploads/${screenshot}`;
+  };
+
+  const getProductImageUrl = (image: string) => {
+    if (!image) return "";
+
+    if (image.startsWith("http")) {
+      return image;
+    }
+
+    if (image.startsWith("/uploads")) {
+      return `${BACKEND_URL}${image}`;
+    }
+
+    return `${BACKEND_URL}/uploads/${image}`;
+  };
+
+  const getProjectTechStack = (techStack?: string[] | string) => {
+    if (!techStack) return "";
+
+    if (Array.isArray(techStack)) {
+      return techStack.join(" • ");
+    }
+
+    return techStack;
+  };
+
   return (
     <main className="min-h-screen bg-slate-50">
       <Navbar />
 
-      {/* Hero Section */}
       <section className="mx-auto flex min-h-[75vh] max-w-7xl flex-col items-center justify-between gap-12 px-6 py-10 lg:flex-row lg:px-12">
-        {/* Left Content */}
         <div className="max-w-2xl text-center lg:text-left">
           <span className="rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-600">
             🚀 Showcase Your Talent
@@ -66,9 +109,9 @@ export default function HomePage() {
           </h1>
 
           <p className="mt-6 text-lg text-gray-600">
-            Empowering students with practical coding skills, real-world projects, and
-            portfolio-ready experience to prepare them for internships, hackathons, and
-            future tech careers.
+            Empowering students with practical coding skills, real-world projects,
+            and portfolio-ready experience to prepare them for internships,
+            hackathons, and future tech careers.
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
@@ -88,30 +131,22 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Right Side */}
         <div className="relative hidden items-center justify-center lg:flex">
           <div className="relative h-[450px] w-[350px] overflow-hidden rounded-3xl bg-gradient-to-br from-purple-200 via-purple-400 to-purple-600 shadow-2xl">
-            {/* Floating circles */}
             <div className="absolute left-8 top-8 h-20 w-20 rounded-full bg-white/20"></div>
             <div className="absolute bottom-10 right-8 h-28 w-28 rounded-full bg-white/20"></div>
 
-            {/* Main Avatar */}
             <div className="absolute left-1/2 top-16 flex -translate-x-1/2 flex-col items-center">
               <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-white bg-white text-5xl font-bold text-purple-600 shadow-xl">
                 👨‍💻
               </div>
 
               <div className="mt-4 rounded-2xl bg-white/90 px-5 py-3 text-center shadow-lg">
-                <h4 className="font-bold text-gray-900">
-                  Future Coders
-                </h4>
-                <p className="text-sm text-gray-600">
-                  Computer Classes
-                </p>
+                <h4 className="font-bold text-gray-900">Future Coders</h4>
+                <p className="text-sm text-gray-600">Computer Classes</p>
               </div>
             </div>
 
-            {/* Skills cards */}
             <div className="absolute bottom-6 left-6 right-6 grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-white/90 p-2 text-center shadow">
                 <p className="text-xl">💻</p>
@@ -149,7 +184,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Stats Section */}
       <section className="mx-auto max-w-6xl px-6 py-16">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div className="rounded-2xl bg-white p-6 text-center shadow">
@@ -174,15 +208,12 @@ export default function HomePage() {
           </div>
 
           <div className="rounded-2xl bg-white p-6 text-center shadow">
-            <h2 className="text-4xl font-bold text-purple-600">
-              10+
-            </h2>
+            <h2 className="text-4xl font-bold text-purple-600">10+</h2>
             <p className="mt-2 text-gray-600">Technologies</p>
           </div>
         </div>
       </section>
 
-      {/* Featured Projects */}
       <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="mb-10 flex items-center justify-between">
           <h2 className="text-4xl font-bold">Featured Projects</h2>
@@ -211,9 +242,11 @@ export default function HomePage() {
                 className="overflow-hidden rounded-3xl bg-white shadow-lg transition hover:-translate-y-2 hover:shadow-xl"
               >
                 {project.screenshot ? (
-                  <img
-                    src={project.screenshot}
+                  <Image
+                    src={getProjectImageUrl(project.screenshot)}
                     alt={project.title}
+                    width={600}
+                    height={400}
                     className="h-40 w-full object-cover"
                     onError={(e) => {
                       e.currentTarget.src =
@@ -233,22 +266,20 @@ export default function HomePage() {
                     </span>
                   )}
 
-                  <h3 className="line-clamp-1 font-bold">
-                    {project.title}
-                  </h3>
+                  <h3 className="line-clamp-1 font-bold">{project.title}</h3>
 
                   <p className="mt-2 line-clamp-2 text-sm text-gray-500">
                     {project.description}
                   </p>
 
-                  {project.techStack?.length > 0 && (
+                  {project.techStack && (
                     <p className="mt-3 line-clamp-1 text-sm text-purple-600">
-                      {project.techStack.join(" • ")}
+                      {getProjectTechStack(project.techStack)}
                     </p>
                   )}
 
                   <button
-                    onClick={() => router.push("/projects")}
+                    onClick={() => router.push(`/projects/${project._id}`)}
                     className="mt-4 rounded-lg bg-purple-600 px-4 py-2 text-sm text-white transition hover:bg-purple-700"
                   >
                     View Project
@@ -260,7 +291,6 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* Featured Products */}
       <section className="mx-auto max-w-7xl px-6 pb-20">
         <div className="mb-10 flex items-center justify-between">
           <h2 className="text-4xl font-bold">Featured Products</h2>
@@ -285,15 +315,11 @@ export default function HomePage() {
                 className="overflow-hidden rounded-3xl bg-white shadow-lg transition hover:-translate-y-2 hover:shadow-xl"
               >
                 {product.image ? (
-                  <img
-                    src={
-                      product.image.startsWith("http")
-                        ? product.image
-                        : product.image.startsWith("/uploads")
-                          ? `http://localhost:27017${product.image}`
-                          : `http://localhost:27017/uploads/${product.image}`
-                    }
+                  <Image
+                    src={getProductImageUrl(product.image)}
                     alt={product.name}
+                    width={600}
+                    height={400}
                     className="h-40 w-full object-cover"
                     onError={(e) => {
                       e.currentTarget.src =
@@ -320,8 +346,15 @@ export default function HomePage() {
                   </p>
 
                   <p className="mt-3 font-semibold text-green-600">
-                    ₹{product.price || 0}
+                    {product.price ? `₹${product.price}` : "Price not added"}
                   </p>
+
+                  <button
+                    onClick={() => router.push(`/products/${product._id}`)}
+                    className="mt-4 rounded-lg bg-green-600 px-4 py-2 text-sm text-white transition hover:bg-green-700"
+                  >
+                    View Product
+                  </button>
                 </div>
               </div>
             ))}

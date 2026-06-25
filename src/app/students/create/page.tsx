@@ -1,15 +1,14 @@
 "use client";
 
+import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+
 import { createStudent } from "@/services/studentService";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function CreateStudentPage() {
   const router = useRouter();
@@ -30,10 +29,10 @@ export default function CreateStudentPage() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
+    }));
   };
 
   const handleImageChange = (
@@ -81,33 +80,29 @@ export default function CreateStudentPage() {
         localStorage.getItem("token")
       );
 
-      const response = await createStudent(
-        studentPayload
-      );
+      const response = await createStudent(studentPayload);
 
-      console.log(
-        "CREATE STUDENT RESPONSE:",
-        response
-      );
+      console.log("CREATE STUDENT RESPONSE:", response);
 
       alert("Student created successfully");
 
       router.push("/students");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.log("FULL ERROR:", error);
-      console.log(
-        "RESPONSE:",
-        error.response?.data
-      );
-      console.log(
-        "STATUS:",
-        error.response?.status
-      );
 
-      alert(
-        error.response?.data?.message ||
-          "Failed to create student"
-      );
+      if (axios.isAxiosError(error)) {
+        console.log("RESPONSE:", error.response?.data);
+        console.log("STATUS:", error.response?.status);
+
+        alert(
+          error.response?.data?.message ||
+            "Failed to create student"
+        );
+      } else if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("Failed to create student");
+      }
     } finally {
       setLoading(false);
     }
@@ -195,9 +190,7 @@ export default function CreateStudentPage() {
               className="w-full"
               disabled={loading}
             >
-              {loading
-                ? "Creating..."
-                : "Create Student"}
+              {loading ? "Creating..." : "Create Student"}
             </Button>
           </form>
         </CardContent>

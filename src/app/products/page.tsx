@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -8,17 +9,15 @@ import {
   deleteProduct,
 } from "@/services/productService";
 
+import { Product } from "@/types/product";
+
 const BACKEND_URL = "http://localhost:27017";
 
 export default function ProductsPage() {
   const router = useRouter();
 
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
 
   const getProductImageUrl = (image: string) => {
     if (!image) return "";
@@ -34,7 +33,7 @@ export default function ProductsPage() {
     return `${BACKEND_URL}/uploads/${image}`;
   };
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const data = await getAllProducts();
 
@@ -46,7 +45,11 @@ export default function ProductsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
@@ -80,9 +83,7 @@ export default function ProductsPage() {
     <div className="mx-auto max-w-7xl p-8">
       <div className="mb-10 flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold">
-            Products
-          </h1>
+          <h1 className="text-4xl font-bold">Products</h1>
 
           <p className="mt-2 text-gray-500">
             Manage all uploaded products
@@ -105,9 +106,7 @@ export default function ProductsPage() {
 
       {products.length === 0 ? (
         <div className="rounded-xl border bg-white p-10 text-center">
-          <p className="text-gray-500">
-            No products found.
-          </p>
+          <p className="text-gray-500">No products found.</p>
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -117,9 +116,11 @@ export default function ProductsPage() {
               className="overflow-hidden rounded-2xl bg-white shadow transition duration-300 hover:-translate-y-1 hover:shadow-xl"
             >
               {product.image ? (
-                <img
+                <Image
                   src={getProductImageUrl(product.image)}
                   alt={product.name}
+                  width={600}
+                  height={400}
                   className="h-48 w-full object-cover"
                   onError={(e) => {
                     e.currentTarget.src =
@@ -139,9 +140,7 @@ export default function ProductsPage() {
                   </span>
                 )}
 
-                <h2 className="text-xl font-bold">
-                  {product.name}
-                </h2>
+                <h2 className="text-xl font-bold">{product.name}</h2>
 
                 {product.description && (
                   <p className="mt-2 line-clamp-3 text-sm text-gray-600">
@@ -152,7 +151,7 @@ export default function ProductsPage() {
                 <div className="mt-4 space-y-1">
                   <p className="text-sm text-gray-600">
                     <span className="font-semibold">Price:</span>{" "}
-                    ₹{product.price || 0}
+                    {product.price ? `₹${product.price}` : "Price not added"}
                   </p>
 
                   <p className="text-sm text-gray-600">
@@ -163,9 +162,7 @@ export default function ProductsPage() {
 
                 <div className="mt-6 flex flex-wrap gap-3">
                   <button
-                    onClick={() =>
-                      router.push(`/products/${product._id}`)
-                    }
+                    onClick={() => router.push(`/products/${product._id}`)}
                     className="rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
                   >
                     Edit

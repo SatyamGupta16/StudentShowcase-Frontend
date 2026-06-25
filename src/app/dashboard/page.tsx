@@ -8,6 +8,10 @@ import { getAllStudents } from "@/services/studentService";
 import { getAllProjects } from "@/services/projectService";
 import { getAllProducts } from "@/services/productService";
 
+import { Student } from "@/types/student";
+import { Project } from "@/types/project";
+import { Product } from "@/types/product";
+
 import {
   Card,
   CardContent,
@@ -20,49 +24,42 @@ import { Button } from "@/components/ui/button";
 export default function DashboardPage() {
   const router = useRouter();
 
-  const [students, setStudents] = useState<any[]>([]);
-  const [projects, setProjects] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const token = getToken();
+    const fetchDashboardData = async () => {
+      try {
+        const token = getToken();
 
-    if (!token) {
-      router.push("/login");
-      return;
-    }
+        if (!token) {
+          router.push("/login");
+          return;
+        }
+
+        const [studentsData, projectsData, productsData] = await Promise.all([
+          getAllStudents(),
+          getAllProjects(),
+          getAllProducts(),
+        ]);
+
+        setStudents(studentsData);
+        setProjects(projectsData);
+        setProducts(productsData);
+      } catch (err) {
+        console.error("DASHBOARD DATA ERROR:", err);
+        setError("Failed to load dashboard data");
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchDashboardData();
   }, [router]);
-
-  const fetchDashboardData = async () => {
-    try {
-      const [
-        studentsData,
-        projectsData,
-        productsData,
-      ] = await Promise.all([
-        getAllStudents(),
-        getAllProjects(),
-        getAllProducts(),
-      ]);
-
-      setStudents(studentsData);
-      setProjects(projectsData);
-      setProducts(productsData);
-    } catch (err) {
-      console.error(err);
-
-      setError(
-        "Failed to load dashboard data"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleLogout = () => {
     removeToken();
@@ -91,19 +88,14 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="mb-10 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold">
-              Dashboard
-            </h1>
+            <h1 className="text-4xl font-bold">Dashboard</h1>
 
             <p className="mt-2 text-muted-foreground">
               Manage students, projects and products efficiently.
             </p>
           </div>
 
-          <Button
-            variant="destructive"
-            onClick={handleLogout}
-          >
+          <Button variant="destructive" onClick={handleLogout}>
             Logout
           </Button>
         </div>
@@ -164,62 +156,39 @@ export default function DashboardPage() {
 
         {/* Quick Actions */}
         <div className="mt-10">
-          <h2 className="mb-5 text-2xl font-bold">
-            Quick Actions
-          </h2>
+          <h2 className="mb-5 text-2xl font-bold">Quick Actions</h2>
 
           <div className="flex flex-wrap gap-4">
             <Button
               className="bg-purple-600 hover:bg-purple-700"
-              onClick={() =>
-                router.push("/students/create")
-              }
+              onClick={() => router.push("/students/create")}
             >
               Add Student
             </Button>
 
-            <Button
-              variant="outline"
-              onClick={() =>
-                router.push("/students")
-              }
-            >
+            <Button variant="outline" onClick={() => router.push("/students")}>
               View Students
             </Button>
 
             <Button
               className="bg-blue-600 hover:bg-blue-700"
-              onClick={() =>
-                router.push("/projects/create")
-              }
+              onClick={() => router.push("/projects/create")}
             >
               Add Project
             </Button>
 
-            <Button
-              variant="outline"
-              onClick={() =>
-                router.push("/projects")
-              }
-            >
+            <Button variant="outline" onClick={() => router.push("/projects")}>
               View Projects
             </Button>
 
             <Button
               className="bg-green-600 hover:bg-green-700"
-              onClick={() =>
-                router.push("/products/create")
-              }
+              onClick={() => router.push("/products/create")}
             >
               Add Product
             </Button>
 
-            <Button
-              variant="outline"
-              onClick={() =>
-                router.push("/products")
-              }
-            >
+            <Button variant="outline" onClick={() => router.push("/products")}>
               View Products
             </Button>
           </div>
@@ -228,16 +197,12 @@ export default function DashboardPage() {
         {/* Recent Students */}
         <Card className="mt-12">
           <CardHeader>
-            <CardTitle>
-              Recent Students
-            </CardTitle>
+            <CardTitle>Recent Students</CardTitle>
           </CardHeader>
 
           <CardContent className="space-y-4">
             {students.length === 0 ? (
-              <p className="text-gray-500">
-                No students found
-              </p>
+              <p className="text-gray-500">No students found</p>
             ) : (
               students
                 .slice(-5)
@@ -248,17 +213,13 @@ export default function DashboardPage() {
                     className="flex items-center justify-between rounded-xl border p-4"
                   >
                     <div>
-                      <h3 className="font-semibold">
-                        {student.name}
-                      </h3>
+                      <h3 className="font-semibold">{student.name}</h3>
 
-                      <p className="text-sm text-gray-500">
-                        {student.email}
-                      </p>
+                      <p className="text-sm text-gray-500">{student.email}</p>
                     </div>
 
                     <span className="rounded-full bg-purple-100 px-3 py-1 text-sm text-purple-600">
-                      {student.batch}
+                      {student.batch || student.year || "N/A"}
                     </span>
                   </div>
                 ))

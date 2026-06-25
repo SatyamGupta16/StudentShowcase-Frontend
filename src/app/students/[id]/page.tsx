@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import axios from "axios";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import {
@@ -39,10 +41,6 @@ export default function EditStudentPage() {
     skills: "",
   });
 
-  useEffect(() => {
-    fetchStudent();
-  }, []);
-
   const getProfilePhotoUrl = (image: string) => {
     if (!image) return "";
 
@@ -57,7 +55,17 @@ export default function EditStudentPage() {
     return `${BACKEND_URL}/uploads/${image}`;
   };
 
-  const fetchStudent = async () => {
+  const formatSkills = (skills?: string[] | string) => {
+    if (!skills) return "";
+
+    if (Array.isArray(skills)) {
+      return skills.join(", ");
+    }
+
+    return skills;
+  };
+
+  const fetchStudent = useCallback(async () => {
     try {
       const student = await getStudentById(studentId);
 
@@ -70,25 +78,29 @@ export default function EditStudentPage() {
         github: student.github || "",
         linkedin: student.linkedin || "",
         batch: student.batch || "",
-        skills: student.skills?.join(", ") || "",
+        skills: formatSkills(student.skills),
       });
 
       setPreviewPhoto(student.profilePhoto || "");
     } catch (error) {
-      console.error(error);
+      console.error("FETCH STUDENT ERROR:", error);
       alert("Failed to load student");
     } finally {
       setLoading(false);
     }
-  };
+  }, [studentId]);
+
+  useEffect(() => {
+    fetchStudent();
+  }, [fetchStudent]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
+    }));
   };
 
   const handleImageChange = (
@@ -133,23 +145,26 @@ export default function EditStudentPage() {
 
       console.log("UPDATE FORM DATA READY");
 
-      const response = await updateStudent(
-        studentId,
-        payload
-      );
+      const response = await updateStudent(studentId, payload);
 
       console.log("UPDATE RESPONSE:", response);
 
       alert("Student updated successfully");
 
       router.push("/students");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.log("UPDATE ERROR:", error);
 
-      alert(
-        error.response?.data?.message ||
-          "Failed to update student"
-      );
+      if (axios.isAxiosError(error)) {
+        alert(
+          error.response?.data?.message ||
+            "Failed to update student"
+        );
+      } else if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("Failed to update student");
+      }
     } finally {
       setUpdating(false);
     }
@@ -177,13 +192,16 @@ export default function EditStudentPage() {
           >
             {previewPhoto ? (
               <div className="flex justify-center">
-                <img
+                <Image
                   src={
                     previewPhoto.startsWith("blob:")
                       ? previewPhoto
                       : getProfilePhotoUrl(previewPhoto)
                   }
                   alt="Profile Preview"
+                  width={112}
+                  height={112}
+                  unoptimized={previewPhoto.startsWith("blob:")}
                   className="h-28 w-28 rounded-full object-cover"
                   onError={(e) => {
                     e.currentTarget.src =
@@ -269,9 +287,7 @@ export default function EditStudentPage() {
               className="w-full"
               disabled={updating}
             >
-              {updating
-                ? "Updating..."
-                : "Update Student"}
+              {updating ? "Updating..." : "Update Student"}
             </Button>
           </form>
         </CardContent>

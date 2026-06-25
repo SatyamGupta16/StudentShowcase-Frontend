@@ -1,11 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import Navbar from "@/components/layout/Navbar";
 import { getStudentById } from "@/services/studentService";
 import { getAllProjects } from "@/services/projectService";
+
+import { Student } from "@/types/student";
+import { Project } from "@/types/project";
 
 const BACKEND_URL = "http://localhost:27017";
 
@@ -13,13 +17,11 @@ export default function StudentProfilePage() {
   const params = useParams();
   const router = useRouter();
 
-  const [student, setStudent] = useState<any>(null);
-  const [projects, setProjects] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const studentId = params.id as string;
 
-  useEffect(() => {
-    fetchStudentProfile();
-  }, []);
+  const [student, setStudent] = useState<Student | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const getImageUrl = (image: string) => {
     if (!image) return "";
@@ -35,18 +37,44 @@ export default function StudentProfilePage() {
     return `${BACKEND_URL}/uploads/${image}`;
   };
 
-  const fetchStudentProfile = async () => {
+  const getSkills = (skills?: string[] | string) => {
+    if (!skills) return [];
+
+    if (Array.isArray(skills)) {
+      return skills;
+    }
+
+    return skills
+      .split(",")
+      .map((skill) => skill.trim())
+      .filter(Boolean);
+  };
+
+  const getTechStack = (techStack?: string[] | string) => {
+    if (!techStack) return [];
+
+    if (Array.isArray(techStack)) {
+      return techStack;
+    }
+
+    return techStack
+      .split(",")
+      .map((tech) => tech.trim())
+      .filter(Boolean);
+  };
+
+  const fetchStudentProfile = useCallback(async () => {
     try {
-      const studentData = await getStudentById(params.id as string);
+      const studentData = await getStudentById(studentId);
       const projectsData = await getAllProjects();
 
-      const studentProjects = projectsData.filter((project: any) => {
+      const studentProjects = projectsData.filter((project) => {
         const projectStudentId =
           typeof project.student === "string"
             ? project.student
             : project.student?._id;
 
-        return projectStudentId === params.id;
+        return projectStudentId === studentId;
       });
 
       setStudent(studentData);
@@ -57,7 +85,11 @@ export default function StudentProfilePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [studentId]);
+
+  useEffect(() => {
+    fetchStudentProfile();
+  }, [fetchStudentProfile]);
 
   if (loading) {
     return (
@@ -83,6 +115,8 @@ export default function StudentProfilePage() {
     );
   }
 
+  const skills = getSkills(student.skills);
+
   return (
     <main className="min-h-screen bg-slate-50">
       <Navbar />
@@ -96,13 +130,14 @@ export default function StudentProfilePage() {
         </button>
 
         <div className="grid gap-8 lg:grid-cols-[350px_1fr]">
-          {/* Profile Card */}
           <div className="rounded-3xl bg-white p-8 shadow">
             <div className="flex flex-col items-center text-center">
               {student.profilePhoto ? (
-                <img
+                <Image
                   src={getImageUrl(student.profilePhoto)}
                   alt={student.name}
+                  width={128}
+                  height={128}
                   className="h-32 w-32 rounded-full object-cover"
                   onError={(e) => {
                     e.currentTarget.src =
@@ -115,13 +150,9 @@ export default function StudentProfilePage() {
                 </div>
               )}
 
-              <h1 className="mt-6 text-3xl font-bold">
-                {student.name}
-              </h1>
+              <h1 className="mt-6 text-3xl font-bold">{student.name}</h1>
 
-              <p className="mt-2 text-gray-500">
-                {student.email}
-              </p>
+              <p className="mt-2 text-gray-500">{student.email}</p>
 
               {student.batch && (
                 <span className="mt-4 rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-600">
@@ -161,17 +192,15 @@ export default function StudentProfilePage() {
             </div>
           </div>
 
-          {/* Details + Projects */}
           <div className="space-y-8">
-            {/* Skills */}
             <div className="rounded-3xl bg-white p-8 shadow">
               <h2 className="text-2xl font-bold">Skills</h2>
 
-              {student.skills?.length > 0 ? (
+              {skills.length > 0 ? (
                 <div className="mt-5 flex flex-wrap gap-3">
-                  {student.skills.map((skill: string, index: number) => (
+                  {skills.map((skill, index) => (
                     <span
-                      key={index}
+                      key={`${skill}-${index}`}
                       className="rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-700"
                     >
                       {skill}
@@ -179,13 +208,10 @@ export default function StudentProfilePage() {
                   ))}
                 </div>
               ) : (
-                <p className="mt-4 text-gray-500">
-                  No skills added yet.
-                </p>
+                <p className="mt-4 text-gray-500">No skills added yet.</p>
               )}
             </div>
 
-            {/* Projects */}
             <div className="rounded-3xl bg-white p-8 shadow">
               <div className="mb-6 flex items-center justify-between">
                 <h2 className="text-2xl font-bold">
@@ -203,83 +229,87 @@ export default function StudentProfilePage() {
                 </p>
               ) : (
                 <div className="grid gap-6 md:grid-cols-2">
-                  {projects.map((project) => (
-                    <div
-                      key={project._id}
-                      className="overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-                    >
-                      {project.screenshot ? (
-                        <img
-                          src={getImageUrl(project.screenshot)}
-                          alt={project.title}
-                          className="h-44 w-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.src =
-                              "https://placehold.co/600x400?text=No+Image";
-                          }}
-                        />
-                      ) : (
-                        <div className="flex h-44 items-center justify-center bg-purple-100 text-gray-400">
-                          No Screenshot
-                        </div>
-                      )}
+                  {projects.map((project) => {
+                    const techStack = getTechStack(project.techStack);
 
-                      <div className="p-5">
-                        {project.isFeatured && (
-                          <span className="mb-3 inline-block rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">
-                            ⭐ Featured
-                          </span>
+                    return (
+                      <div
+                        key={project._id}
+                        className="overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                      >
+                        {project.screenshot ? (
+                          <Image
+                            src={getImageUrl(project.screenshot)}
+                            alt={project.title}
+                            width={600}
+                            height={400}
+                            className="h-44 w-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.src =
+                                "https://placehold.co/600x400?text=No+Image";
+                            }}
+                          />
+                        ) : (
+                          <div className="flex h-44 items-center justify-center bg-purple-100 text-gray-400">
+                            No Screenshot
+                          </div>
                         )}
 
-                        <h3 className="text-xl font-bold">
-                          {project.title}
-                        </h3>
+                        <div className="p-5">
+                          {project.isFeatured && (
+                            <span className="mb-3 inline-block rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">
+                              ⭐ Featured
+                            </span>
+                          )}
 
-                        <p className="mt-2 line-clamp-3 text-sm text-gray-600">
-                          {project.description}
-                        </p>
+                          <h3 className="text-xl font-bold">
+                            {project.title}
+                          </h3>
 
-                        {project.techStack?.length > 0 && (
-                          <div className="mt-4 flex flex-wrap gap-2">
-                            {project.techStack.map(
-                              (tech: string, index: number) => (
+                          <p className="mt-2 line-clamp-3 text-sm text-gray-600">
+                            {project.description}
+                          </p>
+
+                          {techStack.length > 0 && (
+                            <div className="mt-4 flex flex-wrap gap-2">
+                              {techStack.map((tech, index) => (
                                 <span
-                                  key={index}
+                                  key={`${tech}-${index}`}
                                   className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700"
                                 >
                                   {tech}
                                 </span>
-                              )
+                              ))}
+                            </div>
+                          )}
+
+                          <div className="mt-5 flex flex-wrap gap-3">
+                            {project.githubUrl && (
+                              <a
+                                href={project.githubUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="rounded-lg bg-black px-4 py-2 text-sm text-white transition hover:bg-gray-800"
+                              >
+                                GitHub
+                              </a>
+                            )}
+
+                            {project.liveDemoUrl && (
+                              <a
+                                href={project.liveDemoUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="rounded-lg bg-green-600 px-4 py-2 text-sm text-white transition hover:bg-green-700"
+                              >
+                                Live Demo
+                              </a>
                             )}
                           </div>
-                        )}
-
-                        <div className="mt-5 flex flex-wrap gap-3">
-                          {project.githubUrl && (
-                            <a
-                              href={project.githubUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="rounded-lg bg-black px-4 py-2 text-sm text-white transition hover:bg-gray-800"
-                            >
-                              GitHub
-                            </a>
-                          )}
-
-                          {project.liveDemoUrl && (
-                            <a
-                              href={project.liveDemoUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="rounded-lg bg-green-600 px-4 py-2 text-sm text-white transition hover:bg-green-700"
-                            >
-                              Live Demo
-                            </a>
-                          )}
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>

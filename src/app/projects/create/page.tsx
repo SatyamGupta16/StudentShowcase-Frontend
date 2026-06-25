@@ -6,10 +6,12 @@ import { useRouter } from "next/navigation";
 import { getAllStudents } from "@/services/studentService";
 import { createProject } from "@/services/projectService";
 
+import { Student } from "@/types/student";
+
 export default function CreateProjectPage() {
   const router = useRouter();
 
-  const [students, setStudents] = useState<any[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
   const [image, setImage] = useState<File | null>(null);
 
   const [formData, setFormData] = useState({
@@ -23,23 +25,21 @@ export default function CreateProjectPage() {
   });
 
   useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const data = await getAllStudents();
+        setStudents(data);
+      } catch (error) {
+        console.error("FETCH STUDENTS ERROR:", error);
+      }
+    };
+
     fetchStudents();
   }, []);
 
-  const fetchStudents = async () => {
-    try {
-      const data = await getAllStudents();
-      setStudents(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const handleChange = (
     e: React.ChangeEvent<
-      HTMLInputElement |
-      HTMLTextAreaElement |
-      HTMLSelectElement
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
     const { name, value } = e.target;
@@ -67,43 +67,18 @@ export default function CreateProjectPage() {
     }
   };
 
-  const handleSubmit = async (
-    e: React.FormEvent
-  ) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       const projectData = new FormData();
 
-      projectData.append(
-        "title",
-        formData.title
-      );
-
-      projectData.append(
-        "description",
-        formData.description
-      );
-
-      projectData.append(
-        "githubUrl",
-        formData.githubUrl
-      );
-
-      projectData.append(
-        "liveDemoUrl",
-        formData.liveDemoUrl
-      );
-
-      projectData.append(
-        "student",
-        formData.student
-      );
-
-      projectData.append(
-        "isFeatured",
-        String(formData.isFeatured)
-      );
+      projectData.append("title", formData.title);
+      projectData.append("description", formData.description);
+      projectData.append("githubUrl", formData.githubUrl);
+      projectData.append("liveDemoUrl", formData.liveDemoUrl);
+      projectData.append("student", formData.student);
+      projectData.append("isFeatured", String(formData.isFeatured));
 
       projectData.append(
         "techStack",
@@ -111,14 +86,12 @@ export default function CreateProjectPage() {
           formData.techStack
             .split(",")
             .map((tech) => tech.trim())
+            .filter(Boolean)
         )
       );
 
       if (image) {
-        projectData.append(
-          "screenshot",
-          image
-        );
+        projectData.append("screenshot", image);
       }
 
       await createProject(projectData);
@@ -127,7 +100,7 @@ export default function CreateProjectPage() {
 
       router.push("/projects");
     } catch (error) {
-      console.error(error);
+      console.error("CREATE PROJECT ERROR:", error);
 
       alert("Failed to create project");
     }
@@ -206,15 +179,10 @@ export default function CreateProjectPage() {
           className="w-full rounded-lg border p-3"
           required
         >
-          <option value="">
-            Select Student
-          </option>
+          <option value="">Select Student</option>
 
           {students.map((student) => (
-            <option
-              key={student._id}
-              value={student._id}
-            >
+            <option key={student._id} value={student._id}>
               {student.name}
             </option>
           ))}

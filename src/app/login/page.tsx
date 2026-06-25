@@ -1,7 +1,9 @@
 "use client";
 
+import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+
 import { loginUser } from "@/services/authService";
 import { useAuth } from "@/context/AuthContext";
 
@@ -24,31 +26,42 @@ export default function LoginPage() {
     try {
       setLoading(true);
 
-const data = await loginUser({
-  email,
-  password,
-});
+      const data = await loginUser({
+        email,
+        password,
+      });
 
-console.log("LOGIN RESPONSE:", data);
-console.log("TOKEN FROM API:", data.token);
+      console.log("LOGIN RESPONSE:", data);
+      console.log("TOKEN FROM API:", data.token);
 
-login(data.token);
+      if (!data.token) {
+        throw new Error("Token not received from server");
+      }
 
-console.log(
-  "TOKEN AFTER SAVE:",
-  localStorage.getItem("token")
-);
+      login(data.token);
 
-router.push("/dashboard");
-    } catch (error: any) {
-      console.log("FULL ERROR:", error);
-      console.log("RESPONSE:", error.response?.data);
-      console.log("STATUS:", error.response?.status);
-
-      alert(
-        error.response?.data?.message ||
-          "Login failed"
+      console.log(
+        "TOKEN AFTER SAVE:",
+        localStorage.getItem("token")
       );
+
+      router.push("/dashboard");
+    } catch (error: unknown) {
+      console.log("FULL ERROR:", error);
+
+      if (axios.isAxiosError(error)) {
+        console.log("RESPONSE:", error.response?.data);
+        console.log("STATUS:", error.response?.status);
+
+        alert(
+          error.response?.data?.message ||
+            "Login failed"
+        );
+      } else if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("Login failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -57,7 +70,6 @@ router.push("/dashboard");
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-md">
-
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold">
             Welcome Back
@@ -73,7 +85,6 @@ router.push("/dashboard");
           className="rounded-3xl border bg-white p-8 shadow-lg"
         >
           <div className="space-y-5">
-
             <div>
               <label className="mb-2 block text-sm font-medium">
                 Email
@@ -109,11 +120,8 @@ router.push("/dashboard");
               disabled={loading}
               className="w-full bg-purple-600 hover:bg-purple-700"
             >
-              {loading
-                ? "Logging in..."
-                : "Login"}
+              {loading ? "Logging in..." : "Login"}
             </Button>
-
           </div>
         </form>
       </div>

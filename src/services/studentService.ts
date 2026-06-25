@@ -1,8 +1,9 @@
 import api from "@/lib/api";
 import { getToken } from "@/utils/storage";
+import { Student, StudentInput } from "@/types/student";
 
 // GET ALL STUDENTS
-export const getAllStudents = async () => {
+export const getAllStudents = async (): Promise<Student[]> => {
   const res = await api.get("/students");
 
   console.log("STUDENTS API RESPONSE:", res.data);
@@ -11,7 +12,7 @@ export const getAllStudents = async () => {
 };
 
 // GET SINGLE STUDENT
-export const getStudentById = async (id: string) => {
+export const getStudentById = async (id: string): Promise<Student> => {
   const res = await api.get(`/students/${id}`);
 
   console.log("SINGLE STUDENT RESPONSE:", res.data);
@@ -20,7 +21,9 @@ export const getStudentById = async (id: string) => {
 };
 
 // CREATE STUDENT
-export const createStudent = async (studentData: any) => {
+export const createStudent = async (
+  studentData: StudentInput | FormData
+): Promise<Student> => {
   const token = getToken();
 
   if (!token) {
@@ -44,7 +47,10 @@ export const createStudent = async (studentData: any) => {
 };
 
 // UPDATE STUDENT
-export const updateStudent = async (id: string, studentData: any) => {
+export const updateStudent = async (
+  id: string,
+  studentData: StudentInput | FormData
+): Promise<Student> => {
   const token = getToken();
 
   if (!token) {
@@ -68,7 +74,7 @@ export const updateStudent = async (id: string, studentData: any) => {
 };
 
 // DELETE STUDENT
-export const deleteStudent = async (id: string) => {
+export const deleteStudent = async (id: string): Promise<Student> => {
   const token = getToken();
 
   if (!token) {

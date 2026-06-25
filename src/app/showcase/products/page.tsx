@@ -1,22 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import Navbar from "@/components/layout/Navbar";
 import { getAllProducts } from "@/services/productService";
+
+import { Product } from "@/types/product";
 
 const BACKEND_URL = "http://localhost:27017";
 
 export default function ShowcaseProductsPage() {
   const router = useRouter();
 
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
 
   const getProductImageUrl = (image: string) => {
     if (!image) return "";
@@ -32,7 +31,7 @@ export default function ShowcaseProductsPage() {
     return `${BACKEND_URL}/uploads/${image}`;
   };
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const data = await getAllProducts();
 
@@ -44,7 +43,11 @@ export default function ShowcaseProductsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   if (loading) {
     return (
@@ -63,7 +66,6 @@ export default function ShowcaseProductsPage() {
       <Navbar />
 
       <section className="mx-auto max-w-7xl px-6 py-16">
-        {/* Header */}
         <div className="mb-12 text-center">
           <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-600">
             🛒 Product Showcase
@@ -79,7 +81,6 @@ export default function ShowcaseProductsPage() {
           </p>
         </div>
 
-        {/* Count + Navigation */}
         <div className="mb-8 flex items-center justify-between">
           <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700">
             {products.length} Products
@@ -93,7 +94,6 @@ export default function ShowcaseProductsPage() {
           </button>
         </div>
 
-        {/* Products */}
         {products.length === 0 ? (
           <div className="rounded-2xl bg-white p-12 text-center shadow">
             <p className="text-gray-500">No products found.</p>
@@ -105,11 +105,12 @@ export default function ShowcaseProductsPage() {
                 key={product._id}
                 className="overflow-hidden rounded-3xl bg-white shadow transition hover:-translate-y-2 hover:shadow-xl"
               >
-                {/* Product Image */}
                 {product.image ? (
-                  <img
+                  <Image
                     src={getProductImageUrl(product.image)}
                     alt={product.name}
+                    width={600}
+                    height={400}
                     className="h-56 w-full object-cover"
                     onError={(e) => {
                       e.currentTarget.src =
@@ -123,16 +124,13 @@ export default function ShowcaseProductsPage() {
                 )}
 
                 <div className="p-6">
-                  {/* Featured */}
                   {product.isFeatured && (
                     <span className="mb-3 inline-block rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">
                       ⭐ Featured
                     </span>
                   )}
 
-                  <h2 className="text-2xl font-bold">
-                    {product.name}
-                  </h2>
+                  <h2 className="text-2xl font-bold">{product.name}</h2>
 
                   <p className="mt-3 line-clamp-3 text-sm leading-6 text-gray-600">
                     {product.description || "No description added."}
@@ -141,7 +139,7 @@ export default function ShowcaseProductsPage() {
                   <div className="mt-5 rounded-2xl bg-slate-50 p-4">
                     <p className="text-sm text-gray-600">
                       <span className="font-semibold">Price:</span>{" "}
-                      ₹{product.price || 0}
+                      {product.price ? `₹${product.price}` : "Price not added"}
                     </p>
 
                     <p className="mt-2 text-sm text-gray-600">
@@ -149,6 +147,13 @@ export default function ShowcaseProductsPage() {
                       {product.category || "Not added"}
                     </p>
                   </div>
+
+                  <button
+                    onClick={() => router.push(`/products/${product._id}`)}
+                    className="mt-5 rounded-lg bg-green-600 px-4 py-2 text-sm text-white transition hover:bg-green-700"
+                  >
+                    View Product
+                  </button>
                 </div>
               </div>
             ))}
