@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "studentshowcase-backend.onrender.com",
+        pathname: "/uploads/**",
+      },
+      {
+        protocol: "https",
         hostname: "placehold.co",
       },
     ],
