@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import Navbar from "@/components/layout/Navbar";
@@ -17,6 +17,7 @@ export default function ShowcaseProjectsPage() {
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const getProjectImageUrl = (screenshot: string) => {
     if (!screenshot) return "";
@@ -52,6 +53,31 @@ export default function ShowcaseProjectsPage() {
       .map((tech) => tech.trim())
       .filter(Boolean);
   };
+
+  const filteredProjects = useMemo(() => {
+    const query = searchQuery.toLowerCase().trim();
+
+    if (!query) return projects;
+
+    return projects.filter((project) => {
+      const student = getStudent(project.student);
+      const techStack = getTechStack(project.techStack).join(" ");
+
+      const searchableText = [
+        project.title,
+        project.description,
+        techStack,
+        student?.name,
+        student?.email,
+        student?.batch,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return searchableText.includes(query);
+    });
+  }, [projects, searchQuery]);
 
   const fetchProjects = useCallback(async () => {
     try {
@@ -103,10 +129,21 @@ export default function ShowcaseProjectsPage() {
           </p>
         </div>
 
-        <div className="mb-8 flex items-center justify-between">
-          <span className="rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-700">
-            {projects.length} Projects
-          </span>
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-700">
+              {filteredProjects.length} / {projects.length} Projects
+            </span>
+
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="rounded-full bg-red-100 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-200"
+              >
+                Clear Search
+              </button>
+            )}
+          </div>
 
           <button
             onClick={() => router.push("/showcase/students")}
@@ -116,13 +153,27 @@ export default function ShowcaseProjectsPage() {
           </button>
         </div>
 
-        {projects.length === 0 ? (
+        <div className="mb-10 rounded-2xl bg-white p-4 shadow">
+          <input
+            type="text"
+            placeholder="Search projects by title, tech stack, student name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full rounded-xl border px-4 py-3 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-100"
+          />
+        </div>
+
+        {filteredProjects.length === 0 ? (
           <div className="rounded-2xl bg-white p-12 text-center shadow">
-            <p className="text-gray-500">No projects found.</p>
+            <p className="text-gray-500">
+              {searchQuery
+                ? "No projects matched your search."
+                : "No projects found."}
+            </p>
           </div>
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project) => {
+            {filteredProjects.map((project) => {
               const student = getStudent(project.student);
               const techStack = getTechStack(project.techStack);
 

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import Navbar from "@/components/layout/Navbar";
@@ -16,6 +16,7 @@ export default function ShowcaseProductsPage() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const getProductImageUrl = (image: string) => {
     if (!image) return "";
@@ -30,6 +31,26 @@ export default function ShowcaseProductsPage() {
 
     return `${BACKEND_URL}/uploads/${image}`;
   };
+
+  const filteredProducts = useMemo(() => {
+    const query = searchQuery.toLowerCase().trim();
+
+    if (!query) return products;
+
+    return products.filter((product) => {
+      const searchableText = [
+        product.name,
+        product.description,
+        product.category,
+        product.price?.toString(),
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return searchableText.includes(query);
+    });
+  }, [products, searchQuery]);
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -81,10 +102,21 @@ export default function ShowcaseProductsPage() {
           </p>
         </div>
 
-        <div className="mb-8 flex items-center justify-between">
-          <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700">
-            {products.length} Products
-          </span>
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700">
+              {filteredProducts.length} / {products.length} Products
+            </span>
+
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="rounded-full bg-red-100 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-200"
+              >
+                Clear Search
+              </button>
+            )}
+          </div>
 
           <button
             onClick={() => router.push("/showcase/projects")}
@@ -94,13 +126,27 @@ export default function ShowcaseProductsPage() {
           </button>
         </div>
 
-        {products.length === 0 ? (
+        <div className="mb-10 rounded-2xl bg-white p-4 shadow">
+          <input
+            type="text"
+            placeholder="Search products by name, category, description..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full rounded-xl border px-4 py-3 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
+          />
+        </div>
+
+        {filteredProducts.length === 0 ? (
           <div className="rounded-2xl bg-white p-12 text-center shadow">
-            <p className="text-gray-500">No products found.</p>
+            <p className="text-gray-500">
+              {searchQuery
+                ? "No products matched your search."
+                : "No products found."}
+            </p>
           </div>
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <div
                 key={product._id}
                 className="overflow-hidden rounded-3xl bg-white shadow transition hover:-translate-y-2 hover:shadow-xl"
@@ -111,7 +157,7 @@ export default function ShowcaseProductsPage() {
                     alt={product.name}
                     width={600}
                     height={400}
-                    className="h-56 w-full object-cover"
+                    className="h-56 w-full bg-slate-100 object-contain"
                     onError={(e) => {
                       e.currentTarget.src =
                         "https://placehold.co/600x400?text=No+Image";
@@ -149,7 +195,9 @@ export default function ShowcaseProductsPage() {
                   </div>
 
                   <button
-                    onClick={() => router.push(`/showcase/products/${product._id}`)}
+                    onClick={() =>
+                      router.push(`/showcase/products/${product._id}`)
+                    }
                     className="mt-5 rounded-lg bg-green-600 px-4 py-2 text-sm text-white transition hover:bg-green-700"
                   >
                     View Product

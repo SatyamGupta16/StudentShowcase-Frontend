@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import Navbar from "@/components/layout/Navbar";
@@ -16,6 +16,7 @@ export default function ShowcaseStudentsPage() {
 
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const getProfileImageUrl = (image: string) => {
     if (!image) return "";
@@ -43,6 +44,29 @@ export default function ShowcaseStudentsPage() {
       .map((skill) => skill.trim())
       .filter(Boolean);
   };
+
+  const filteredStudents = useMemo(() => {
+    const query = searchQuery.toLowerCase().trim();
+
+    if (!query) return students;
+
+    return students.filter((student) => {
+      const skills = getSkills(student.skills).join(" ");
+
+      const searchableText = [
+        student.name,
+        student.email,
+        student.bio,
+        student.batch,
+        skills,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return searchableText.includes(query);
+    });
+  }, [students, searchQuery]);
 
   const fetchStudents = useCallback(async () => {
     try {
@@ -94,19 +118,51 @@ export default function ShowcaseStudentsPage() {
           </p>
         </div>
 
-        <div className="mb-8">
-          <span className="rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-700">
-            {students.length} Students
-          </span>
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-700">
+              {filteredStudents.length} / {students.length} Students
+            </span>
+
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="rounded-full bg-red-100 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-200"
+              >
+                Clear Search
+              </button>
+            )}
+          </div>
+
+          <button
+            onClick={() => router.push("/showcase/projects")}
+            className="rounded-lg border px-4 py-2 text-sm font-medium transition hover:bg-white"
+          >
+            View Projects →
+          </button>
         </div>
 
-        {students.length === 0 ? (
+        <div className="mb-10 rounded-2xl bg-white p-4 shadow">
+          <input
+            type="text"
+            placeholder="Search students by name, skill, batch, email..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full rounded-xl border px-4 py-3 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-100"
+          />
+        </div>
+
+        {filteredStudents.length === 0 ? (
           <div className="rounded-2xl bg-white p-12 text-center shadow">
-            <p className="text-gray-500">No students found.</p>
+            <p className="text-gray-500">
+              {searchQuery
+                ? "No students matched your search."
+                : "No students found."}
+            </p>
           </div>
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {students.map((student) => {
+            {filteredStudents.map((student) => {
               const skills = getSkills(student.skills);
 
               return (
