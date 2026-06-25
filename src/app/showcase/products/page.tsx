@@ -149,7 +149,7 @@ export default function ShowcaseProductsPage() {
                   </div>
 
                   <button
-                    onClick={() => router.push(`/products/${product._id}`)}
+                    onClick={() => router.push(`/showcase/products/${product._id}`)}
                     className="mt-5 rounded-lg bg-green-600 px-4 py-2 text-sm text-white transition hover:bg-green-700"
                   >
                     View Product

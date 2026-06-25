@@ -137,7 +137,7 @@ export default function ShowcaseProjectsPage() {
                       alt={project.title}
                       width={600}
                       height={400}
-                      className="h-52 w-full object-cover"
+                      className="h-52 w-full bg-slate-100 object-contain"
                       onError={(e) => {
                         e.currentTarget.src =
                           "https://placehold.co/600x400?text=No+Image";
@@ -220,6 +220,15 @@ export default function ShowcaseProjectsPage() {
                     )}
 
                     <div className="mt-6 flex flex-wrap gap-3">
+                      <button
+                        onClick={() =>
+                          router.push(`/showcase/projects/${project._id}`)
+                        }
+                        className="rounded-lg bg-purple-600 px-4 py-2 text-sm text-white transition hover:bg-purple-700"
+                      >
+                        View Details
+                      </button>
+
                       {project.githubUrl && (
                         <a
                           href={project.githubUrl}
@@ -247,7 +256,7 @@ export default function ShowcaseProjectsPage() {
                           onClick={() =>
                             router.push(`/showcase/students/${student._id}`)
                           }
-                          className="rounded-lg bg-purple-600 px-4 py-2 text-sm text-white transition hover:bg-purple-700"
+                          className="rounded-lg border border-purple-600 px-4 py-2 text-sm text-purple-600 transition hover:bg-purple-50"
                         >
                           Student Profile
                         </button>
