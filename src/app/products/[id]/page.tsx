@@ -11,7 +11,8 @@ import {
   updateProduct,
 } from "@/services/productService";
 
-const BACKEND_URL = "http://localhost:27017";
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:27017";
 
 export default function EditProductPage() {
   const params = useParams();

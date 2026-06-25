@@ -11,7 +11,8 @@ import { getAllProjects } from "@/services/projectService";
 import { Student } from "@/types/student";
 import { Project } from "@/types/project";
 
-const BACKEND_URL = "http://localhost:27017";
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:27017";
 
 export default function StudentProfilePage() {
   const params = useParams();

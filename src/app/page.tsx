@@ -13,7 +13,8 @@ import { Student } from "@/types/student";
 import { Project } from "@/types/project";
 import { Product } from "@/types/product";
 
-const BACKEND_URL = "http://localhost:27017";
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:27017";
 
 export default function HomePage() {
   const router = useRouter();

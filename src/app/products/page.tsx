@@ -13,7 +13,8 @@ import {
 
 import { Product } from "@/types/product";
 
-const BACKEND_URL = "http://localhost:27017";
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:27017";
 
 export default function ProductsPage() {
   const router = useRouter();

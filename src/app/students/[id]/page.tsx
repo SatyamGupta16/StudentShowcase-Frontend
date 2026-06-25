@@ -19,7 +19,8 @@ import {
   CardContent,
 } from "@/components/ui/card";
 
-const BACKEND_URL = "http://localhost:27017";
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:27017";
 
 export default function EditStudentPage() {
   const params = useParams();
