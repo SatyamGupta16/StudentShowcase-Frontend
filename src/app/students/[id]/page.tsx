@@ -5,6 +5,8 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
+import AdminGuard from "@/components/auth/AdminGuard";
+
 import {
   getStudentById,
   updateStudent,
@@ -172,126 +174,140 @@ export default function EditStudentPage() {
 
   if (loading) {
     return (
-      <div className="p-10">
-        Loading Student...
-      </div>
+      <AdminGuard>
+        <div className="p-10">
+          Loading Student...
+        </div>
+      </AdminGuard>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-8">
-      <Card className="w-full max-w-2xl">
-        <CardContent className="p-8">
-          <h1 className="mb-6 text-3xl font-bold">
-            Edit Student
-          </h1>
+    <AdminGuard>
+      <div className="flex min-h-screen items-center justify-center bg-gray-100 p-8">
+        <Card className="w-full max-w-2xl">
+          <CardContent className="p-8">
+            <div className="mb-6 flex items-center justify-between">
+              <h1 className="text-3xl font-bold">
+                Edit Student
+              </h1>
 
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-4"
-          >
-            {previewPhoto ? (
-              <div className="flex justify-center">
-                <Image
-                  src={
-                    previewPhoto.startsWith("blob:")
-                      ? previewPhoto
-                      : getProfilePhotoUrl(previewPhoto)
-                  }
-                  alt="Profile Preview"
-                  width={112}
-                  height={112}
-                  unoptimized={previewPhoto.startsWith("blob:")}
-                  className="h-28 w-28 rounded-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src =
-                      "https://placehold.co/200x200?text=Student";
-                  }}
-                />
-              </div>
-            ) : (
-              <div className="flex justify-center">
-                <div className="flex h-28 w-28 items-center justify-center rounded-full bg-purple-100 text-4xl font-bold text-purple-600">
-                  {formData.name?.charAt(0)?.toUpperCase() || "S"}
-                </div>
-              </div>
-            )}
-
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                Change Profile Photo
-              </label>
-
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push("/students")}
+              >
+                Back
+              </Button>
             </div>
 
-            <Input
-              name="name"
-              placeholder="Student Name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-
-            <Input
-              name="email"
-              type="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-
-            <Input
-              name="bio"
-              placeholder="Bio"
-              value={formData.bio}
-              onChange={handleChange}
-            />
-
-            <Input
-              name="skills"
-              placeholder="Skills comma separated e.g. React, Node.js, MongoDB"
-              value={formData.skills}
-              onChange={handleChange}
-            />
-
-            <Input
-              name="github"
-              placeholder="Github URL"
-              value={formData.github}
-              onChange={handleChange}
-            />
-
-            <Input
-              name="linkedin"
-              placeholder="LinkedIn URL"
-              value={formData.linkedin}
-              onChange={handleChange}
-            />
-
-            <Input
-              name="batch"
-              placeholder="Batch"
-              value={formData.batch}
-              onChange={handleChange}
-              required
-            />
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={updating}
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-4"
             >
-              {updating ? "Updating..." : "Update Student"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+              {previewPhoto ? (
+                <div className="flex justify-center">
+                  <Image
+                    src={
+                      previewPhoto.startsWith("blob:")
+                        ? previewPhoto
+                        : getProfilePhotoUrl(previewPhoto)
+                    }
+                    alt="Profile Preview"
+                    width={112}
+                    height={112}
+                    unoptimized={previewPhoto.startsWith("blob:")}
+                    className="h-28 w-28 rounded-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src =
+                        "https://placehold.co/200x200?text=Student";
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="flex justify-center">
+                  <div className="flex h-28 w-28 items-center justify-center rounded-full bg-purple-100 text-4xl font-bold text-purple-600">
+                    {formData.name?.charAt(0)?.toUpperCase() || "S"}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className="mb-2 block text-sm font-medium">
+                  Change Profile Photo
+                </label>
+
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </div>
+
+              <Input
+                name="name"
+                placeholder="Student Name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+
+              <Input
+                name="email"
+                type="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+
+              <Input
+                name="bio"
+                placeholder="Bio"
+                value={formData.bio}
+                onChange={handleChange}
+              />
+
+              <Input
+                name="skills"
+                placeholder="Skills comma separated e.g. React, Node.js, MongoDB"
+                value={formData.skills}
+                onChange={handleChange}
+              />
+
+              <Input
+                name="github"
+                placeholder="Github URL"
+                value={formData.github}
+                onChange={handleChange}
+              />
+
+              <Input
+                name="linkedin"
+                placeholder="LinkedIn URL"
+                value={formData.linkedin}
+                onChange={handleChange}
+              />
+
+              <Input
+                name="batch"
+                placeholder="Batch"
+                value={formData.batch}
+                onChange={handleChange}
+                required
+              />
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={updating}
+              >
+                {updating ? "Updating..." : "Update Student"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </AdminGuard>
   );
 }

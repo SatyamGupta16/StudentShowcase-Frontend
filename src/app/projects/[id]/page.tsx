@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
+import AdminGuard from "@/components/auth/AdminGuard";
+
 import {
   getProjectById,
   updateProject,
@@ -15,6 +17,7 @@ export default function EditProjectPage() {
   const projectId = params.id as string;
 
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -79,6 +82,8 @@ export default function EditProjectPage() {
     e.preventDefault();
 
     try {
+      setUpdating(true);
+
       await updateProject(projectId, {
         ...formData,
         techStack: formData.techStack
@@ -94,92 +99,119 @@ export default function EditProjectPage() {
       console.error(error);
 
       alert("Failed to update project");
+    } finally {
+      setUpdating(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        Loading Project...
-      </div>
+      <AdminGuard>
+        <div className="flex h-screen items-center justify-center">
+          Loading Project...
+        </div>
+      </AdminGuard>
     );
   }
 
   return (
-    <div className="mx-auto max-w-3xl p-8">
-      <h1 className="mb-8 text-4xl font-bold">
-        Edit Project
-      </h1>
+    <AdminGuard>
+      <div className="mx-auto max-w-3xl p-8">
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="text-4xl font-bold">
+            Edit Project
+          </h1>
 
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-5 rounded-2xl bg-white p-8 shadow"
-      >
-        <input
-          type="text"
-          name="title"
-          placeholder="Project Title"
-          value={formData.title}
-          onChange={handleChange}
-          className="w-full rounded-lg border p-3"
-          required
-        />
+          <button
+            type="button"
+            onClick={() => router.push("/projects")}
+            className="rounded-lg border px-4 py-2 transition hover:bg-white"
+          >
+            Back
+          </button>
+        </div>
 
-        <textarea
-          name="description"
-          placeholder="Project Description"
-          value={formData.description}
-          onChange={handleChange}
-          rows={4}
-          className="w-full rounded-lg border p-3"
-          required
-        />
-
-        <input
-          type="text"
-          name="techStack"
-          placeholder="React, Next.js, Node.js"
-          value={formData.techStack}
-          onChange={handleChange}
-          className="w-full rounded-lg border p-3"
-        />
-
-        <input
-          type="url"
-          name="githubUrl"
-          placeholder="GitHub URL"
-          value={formData.githubUrl}
-          onChange={handleChange}
-          className="w-full rounded-lg border p-3"
-          required
-        />
-
-        <input
-          type="url"
-          name="liveDemoUrl"
-          placeholder="Live Demo URL"
-          value={formData.liveDemoUrl}
-          onChange={handleChange}
-          className="w-full rounded-lg border p-3"
-          required
-        />
-
-        <label className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            checked={formData.isFeatured}
-            onChange={handleCheckbox}
-          />
-          Featured Project
-        </label>
-
-        <button
-          type="submit"
-          className="w-full rounded-lg bg-blue-600 py-3 text-white hover:bg-blue-700"
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-5 rounded-2xl bg-white p-8 shadow"
         >
-          Update Project
-        </button>
-      </form>
-    </div>
+          <input
+            type="text"
+            name="title"
+            placeholder="Project Title"
+            value={formData.title}
+            onChange={handleChange}
+            className="w-full rounded-lg border p-3"
+            required
+          />
+
+          <textarea
+            name="description"
+            placeholder="Project Description"
+            value={formData.description}
+            onChange={handleChange}
+            rows={4}
+            className="w-full rounded-lg border p-3"
+            required
+          />
+
+          <input
+            type="text"
+            name="techStack"
+            placeholder="React, Next.js, Node.js"
+            value={formData.techStack}
+            onChange={handleChange}
+            className="w-full rounded-lg border p-3"
+          />
+
+          <input
+            type="url"
+            name="githubUrl"
+            placeholder="GitHub URL"
+            value={formData.githubUrl}
+            onChange={handleChange}
+            className="w-full rounded-lg border p-3"
+            required
+          />
+
+          <input
+            type="url"
+            name="liveDemoUrl"
+            placeholder="Live Demo URL"
+            value={formData.liveDemoUrl}
+            onChange={handleChange}
+            className="w-full rounded-lg border p-3"
+            required
+          />
+
+          <label className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={formData.isFeatured}
+              onChange={handleCheckbox}
+            />
+            Featured Project
+          </label>
+
+          <div className="flex gap-4">
+            <button
+              type="submit"
+              disabled={updating}
+              className="rounded-lg bg-blue-600 px-6 py-3 text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {updating ? "Updating..." : "Update Project"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => router.push("/projects")}
+              className="rounded-lg bg-gray-600 px-6 py-3 text-white transition hover:bg-gray-700"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </AdminGuard>
   );
 }

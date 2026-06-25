@@ -116,7 +116,7 @@ export default function HomePage() {
 
           <div className="mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
             <button
-              onClick={() => router.push("/projects")}
+              onClick={() => router.push("/showcase/projects")}
               className="rounded-xl bg-purple-600 px-8 py-4 font-medium text-white transition hover:bg-purple-700"
             >
               Explore Projects
@@ -279,7 +279,7 @@ export default function HomePage() {
                   )}
 
                   <button
-                    onClick={() => router.push(`/projects/${project._id}`)}
+                    onClick={() => router.push(`/showcase/projects/${project._id}`)}
                     className="mt-4 rounded-lg bg-purple-600 px-4 py-2 text-sm text-white transition hover:bg-purple-700"
                   >
                     View Project
@@ -296,7 +296,7 @@ export default function HomePage() {
           <h2 className="text-4xl font-bold">Featured Products</h2>
 
           <button
-            onClick={() => router.push("/products")}
+            onClick={() => router.push("/showcase/products")}
             className="font-medium text-purple-600 hover:underline"
           >
             View All →
