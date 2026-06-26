@@ -22,26 +22,33 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
 
   title: {
-    default: "Student Project Showcase | Projects, Portfolios & Creations",
-    template: "%s | Student Project Showcase",
+    default:
+      "Prompt Computer Classes Student Project Showcase | Projects, Portfolios & Creations",
+    template: "%s | Prompt Computer Classes Student Project Showcase",
   },
 
   verification: {
     google: "7JZcNrJBWCYRZOGL3T0Q4CNA_YBrTt7TjKB8yADw-9w",
   },
+
   description:
-    "A full-stack student project showcase platform where students can display their projects, portfolios, skills, creative work, and achievements in one place.",
+    "Prompt Computer Classes Student Project Showcase is a platform where students can display their projects, portfolios, skills, creative work, and achievements for parents, visitors, and admissions.",
 
   keywords: [
-    "Student Project Showcase",
-    "student portfolio",
+    "Prompt Computer Classes",
+    "Prompt Computer Classes Student Project Showcase",
+    "Prompt Computer Classes projects",
+    "Prompt Computer Classes student projects",
+    "Prompt Computer Classes Bareilly",
+    "Prompt Computer Classes coding projects",
+    "student project showcase",
+    "student portfolio platform",
     "student projects",
-    "college projects",
-    "developer portfolio",
+    "computer classes projects",
+    "coding classes projects",
+    "student creations",
     "Next.js project",
     "MERN project",
-    "student creations",
-    "full stack project",
     "Satyam Gupta",
   ],
 
@@ -52,28 +59,26 @@ export const metadata: Metadata = {
   ],
 
   creator: "Satyam Gupta",
-
-  publisher: "Student Project Showcase",
-
-  applicationName: "Student Project Showcase",
-
-  
+  publisher: "Prompt Computer Classes",
+  applicationName: "Prompt Computer Classes Student Project Showcase",
 
   openGraph: {
-    title: "Student Project Showcase | Projects, Portfolios & Creations",
+    title:
+      "Prompt Computer Classes Student Project Showcase | Projects & Portfolios",
     description:
-      "Explore student projects, portfolios, skills, creations, and achievements on a full-stack student showcase platform.",
+      "Explore student projects, portfolios, skills, creations, and achievements from Prompt Computer Classes.",
     url: siteUrl,
-    siteName: "Student Project Showcase",
+    siteName: "Prompt Computer Classes Student Project Showcase",
     type: "website",
     locale: "en_IN",
   },
 
   twitter: {
     card: "summary",
-    title: "Student Project Showcase | Projects, Portfolios & Creations",
+    title:
+      "Prompt Computer Classes Student Project Showcase | Projects & Portfolios",
     description:
-      "A platform where students can showcase projects, portfolios, skills, and creative work.",
+      "A platform where students of Prompt Computer Classes can showcase projects, portfolios, skills, and creative work.",
   },
 
   robots: {
@@ -88,7 +93,7 @@ export const metadata: Metadata = {
     },
   },
 
-  category: "technology",
+  category: "education",
 };
 
 export default function RootLayout({

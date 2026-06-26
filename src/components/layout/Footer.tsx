@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="mt-20 border-t border-white/10 bg-white px-6 py-10">
+    <footer className="mt-20 border-t border-gray-200 bg-white px-6 py-10">
       <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-3">
         <div>
           <h2 className="text-2xl font-bold text-purple-600">
@@ -32,18 +32,28 @@ export default function Footer() {
             <Link href="/" className="transition hover:text-purple-600">
               Home
             </Link>
+
+            <Link
+              href="/about"
+              className="transition hover:text-purple-600"
+            >
+              About
+            </Link>
+
             <Link
               href="/showcase/projects"
               className="transition hover:text-purple-600"
             >
               Projects
             </Link>
+
             <Link
               href="/showcase/students"
               className="transition hover:text-purple-600"
             >
               Students
             </Link>
+
             <Link
               href="/showcase/products"
               className="transition hover:text-purple-600"
@@ -62,12 +72,15 @@ export default function Footer() {
             <span className="rounded-full bg-purple-100 px-3 py-1 text-purple-700">
               Next.js
             </span>
+
             <span className="rounded-full bg-green-100 px-3 py-1 text-green-700">
               Node.js
             </span>
+
             <span className="rounded-full bg-blue-100 px-3 py-1 text-blue-700">
               TypeScript
             </span>
+
             <span className="rounded-full bg-gray-100 px-3 py-1 text-gray-700">
               MongoDB
             </span>

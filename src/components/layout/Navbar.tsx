@@ -122,6 +122,14 @@ export default function Navbar() {
               onClick={closeMenu}
               className="transition hover:text-purple-600"
             >
+              About
+            </Link>
+
+            <Link
+              href="/showcase/projects"
+              onClick={closeMenu}
+              className="transition hover:text-purple-600"
+            >
               Projects
             </Link>
 
