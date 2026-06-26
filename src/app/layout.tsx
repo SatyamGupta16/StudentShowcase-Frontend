@@ -57,9 +57,7 @@ export const metadata: Metadata = {
 
   applicationName: "Student Project Showcase",
 
-  alternates: {
-    canonical: siteUrl,
-  },
+  
 
   openGraph: {
     title: "Student Project Showcase | Projects, Portfolios & Creations",
