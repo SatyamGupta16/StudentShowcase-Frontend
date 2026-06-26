@@ -20,18 +20,26 @@ export default function ShowcaseProjectsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const getProjectImageUrl = (screenshot: string) => {
-    if (!screenshot) return "";
+  const getProjectImageUrl = (image?: string) => {
+    if (!image) return "";
 
-    if (screenshot.startsWith("http")) {
-      return screenshot;
+    if (image.startsWith("http://localhost:27017/uploads")) {
+      return image.replace("http://localhost:27017", BACKEND_URL);
     }
 
-    if (screenshot.startsWith("/uploads")) {
-      return `${BACKEND_URL}${screenshot}`;
+    if (image.startsWith("https://studentshowcase-backend.onrender.com")) {
+      return image;
     }
 
-    return `${BACKEND_URL}/uploads/${screenshot}`;
+    if (image.startsWith("http")) {
+      return image;
+    }
+
+    if (image.startsWith("/uploads")) {
+      return `${BACKEND_URL}${image}`;
+    }
+
+    return `${BACKEND_URL}/uploads/${image}`;
   };
 
   const getStudent = (student?: Student | string): Student | null => {
@@ -71,6 +79,9 @@ export default function ShowcaseProjectsPage() {
         student?.name,
         student?.email,
         student?.batch,
+        "Prompt Computer Classes",
+        "student projects",
+        "project showcase",
       ]
         .filter(Boolean)
         .join(" ")
@@ -86,7 +97,7 @@ export default function ShowcaseProjectsPage() {
 
       console.log("SHOWCASE PROJECTS:", data);
 
-      setProjects(data);
+      setProjects(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("SHOWCASE PROJECTS ERROR:", error);
     } finally {
@@ -103,8 +114,8 @@ export default function ShowcaseProjectsPage() {
       <main className="min-h-screen bg-slate-50">
         <Navbar />
 
-        <div className="flex min-h-[70vh] items-center justify-center text-lg font-semibold">
-          Loading Projects...
+        <div className="flex min-h-[70vh] items-center justify-center text-lg font-semibold text-gray-700">
+          Loading Prompt Computer Classes student projects...
         </div>
       </main>
     );
@@ -115,21 +126,54 @@ export default function ShowcaseProjectsPage() {
       <Navbar />
 
       <section className="mx-auto max-w-7xl px-6 py-16">
+        {/* Page Header */}
         <div className="mb-12 text-center">
           <span className="rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-600">
-            🚀 Project Showcase
+            🚀 Prompt Computer Classes Project Showcase
           </span>
 
-          <h1 className="mt-6 text-5xl font-bold">
-            Explore Student Projects
+          <h1 className="mt-6 text-4xl font-bold text-gray-950 md:text-5xl">
+            Prompt Computer Classes Student Projects
           </h1>
 
-          <p className="mx-auto mt-4 max-w-2xl text-gray-600">
-            Discover innovative projects built by students using modern web
-            technologies, backend systems, machine learning, and creative ideas.
+          <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-gray-600 md:text-lg">
+            Explore practical projects created by students of Prompt Computer
+            Classes. This page showcases student work, portfolios, technical
+            skills, GitHub repositories, live demos, and project-based learning
+            for parents, visitors, and admissions.
           </p>
         </div>
 
+        {/* SEO Intro Section */}
+        <div className="mb-10 rounded-3xl bg-white p-6 shadow-sm md:p-8">
+          <h2 className="text-2xl font-bold text-gray-950">
+            Student Project Showcase for Practical Learning
+          </h2>
+
+          <p className="mt-3 leading-7 text-gray-600">
+            Prompt Computer Classes Student Project Showcase helps students
+            present their learning through real projects. Visitors can explore
+            web development projects, full-stack applications, creative ideas,
+            technical skills, and student portfolios in one place.
+          </p>
+
+          <div className="mt-5 flex flex-wrap gap-3">
+            <span className="rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-700">
+              Web Development Projects
+            </span>
+            <span className="rounded-full bg-blue-100 px-4 py-2 text-sm font-medium text-blue-700">
+              Student Portfolios
+            </span>
+            <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700">
+              Coding Practice
+            </span>
+            <span className="rounded-full bg-yellow-100 px-4 py-2 text-sm font-medium text-yellow-700">
+              Live Project Demos
+            </span>
+          </div>
+        </div>
+
+        {/* Controls */}
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap items-center gap-3">
             <span className="rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-700">
@@ -148,28 +192,30 @@ export default function ShowcaseProjectsPage() {
 
           <button
             onClick={() => router.push("/showcase/students")}
-            className="rounded-lg border px-4 py-2 text-sm font-medium transition hover:bg-white"
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium transition hover:bg-white"
           >
-            View Students →
+            View Student Profiles →
           </button>
         </div>
 
+        {/* Search */}
         <div className="mb-10 rounded-2xl bg-white p-4 shadow">
           <input
             type="text"
-            placeholder="Search projects by title, tech stack, student name..."
+            placeholder="Search Prompt Computer Classes projects by title, tech stack, student name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border px-4 py-3 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-100"
+            className="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-100"
           />
         </div>
 
+        {/* Projects */}
         {filteredProjects.length === 0 ? (
           <div className="rounded-2xl bg-white p-12 text-center shadow">
             <p className="text-gray-500">
               {searchQuery
                 ? "No projects matched your search."
-                : "No projects found."}
+                : "No student projects found."}
             </p>
           </div>
         ) : (
@@ -179,14 +225,14 @@ export default function ShowcaseProjectsPage() {
               const techStack = getTechStack(project.techStack);
 
               return (
-                <div
+                <article
                   key={project._id}
                   className="overflow-hidden rounded-3xl bg-white shadow transition hover:-translate-y-2 hover:shadow-xl"
                 >
                   {project.screenshot ? (
                     <Image
                       src={getProjectImageUrl(project.screenshot)}
-                      alt={project.title}
+                      alt={`${project.title} - Prompt Computer Classes student project`}
                       width={600}
                       height={400}
                       className="h-52 w-full bg-slate-100 object-contain"
@@ -197,18 +243,20 @@ export default function ShowcaseProjectsPage() {
                     />
                   ) : (
                     <div className="flex h-52 items-center justify-center bg-purple-100 text-gray-400">
-                      No Screenshot
+                      No Project Screenshot
                     </div>
                   )}
 
                   <div className="p-6">
                     {project.isFeatured && (
                       <span className="mb-3 inline-block rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">
-                        ⭐ Featured
+                        ⭐ Featured Project
                       </span>
                     )}
 
-                    <h2 className="text-2xl font-bold">{project.title}</h2>
+                    <h2 className="text-2xl font-bold text-gray-950">
+                      {project.title}
+                    </h2>
 
                     <p className="mt-3 line-clamp-3 text-sm leading-6 text-gray-600">
                       {project.description}
@@ -223,7 +271,7 @@ export default function ShowcaseProjectsPage() {
                         {student?.profilePhoto ? (
                           <Image
                             src={getProjectImageUrl(student.profilePhoto)}
-                            alt={student.name || "Student"}
+                            alt={`${student.name || "Student"} - Prompt Computer Classes student`}
                             width={48}
                             height={48}
                             className="h-12 w-12 rounded-full object-cover"
@@ -239,8 +287,8 @@ export default function ShowcaseProjectsPage() {
                         )}
 
                         <div>
-                          <p className="font-semibold">
-                            {student?.name || "Unknown Student"}
+                          <p className="font-semibold text-gray-950">
+                            {student?.name || "Prompt Computer Classes Student"}
                           </p>
 
                           {student?.email && (
@@ -278,7 +326,7 @@ export default function ShowcaseProjectsPage() {
                         }
                         className="rounded-lg bg-purple-600 px-4 py-2 text-sm text-white transition hover:bg-purple-700"
                       >
-                        View Details
+                        View Project
                       </button>
 
                       {project.githubUrl && (
@@ -315,7 +363,7 @@ export default function ShowcaseProjectsPage() {
                       )}
                     </div>
                   </div>
-                </div>
+                </article>
               );
             })}
           </div>
