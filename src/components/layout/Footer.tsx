@@ -11,7 +11,7 @@ export default function Footer() {
 
           <p className="mt-3 max-w-sm text-sm leading-6 text-gray-600">
             Prompt Computer Classes Student Project Showcase is a platform
-            where students can display their projects, portfolios, skills, and
+            where students can showcase their projects, portfolios, skills, and
             creative work in one place.
           </p>
 

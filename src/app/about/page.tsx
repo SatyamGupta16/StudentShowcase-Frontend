@@ -4,7 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 export const metadata: Metadata = {
   title: "About Prompt Computer Classes Student Project Showcase",
   description:
-    "Learn about Prompt Computer Classes Student Project Showcase, a platform built to display student projects, portfolios, skills, and creative work.",
+    "Learn about Prompt Computer Classes Student Project Showcase, a platform built to showcase student projects, portfolios, skills, and creative work.",
 };
 
 export default function AboutPage() {
