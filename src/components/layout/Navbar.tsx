@@ -4,84 +4,87 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { getToken, removeToken } from "@/utils/storage";
-
 export default function Navbar() {
   const router = useRouter();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const token = getToken();
+    const token = localStorage.getItem("token");
     setIsLoggedIn(Boolean(token));
   }, []);
 
   const handleLogout = () => {
-    removeToken();
+    localStorage.removeItem("token");
     setIsLoggedIn(false);
-    setMenuOpen(false);
+    setMobileMenuOpen(false);
     router.push("/login");
   };
 
-  const closeMenu = () => {
-    setMenuOpen(false);
-  };
+  const navLinks = [
+    {
+      label: "Home",
+      href: "/",
+    },
+    {
+      label: "About",
+      href: "/about",
+    },
+    {
+      label: "Projects",
+      href: "/showcase/projects",
+    },
+    {
+      label: "Students",
+      href: "/showcase/students",
+    },
+    {
+      label: "Creations",
+      href: "/showcase/products",
+    },
+  ];
 
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-md">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Link href="/" onClick={closeMenu}>
-          <h1 className="text-xl font-bold text-purple-600 md:text-2xl">
-            Student Project Showcase
-          </h1>
+    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        {/* Brand / Logo */}
+        <Link href="/" className="group">
+          <div>
+            <h1 className="text-xl font-bold text-purple-600 transition group-hover:text-purple-700 md:text-2xl">
+              Prompt Computer Classes
+            </h1>
+
+            <p className="hidden text-xs font-medium text-gray-500 md:block">
+              Student Project Showcase
+            </p>
+          </div>
         </Link>
 
-        <button
-          onClick={() => setMenuOpen((prev) => !prev)}
-          className="rounded-lg border px-3 py-2 text-sm md:hidden"
-        >
-          {menuOpen ? "Close" : "Menu"}
-        </button>
-
-        <div className="hidden items-center gap-6 md:flex">
-          <Link href="/" className="transition hover:text-purple-600">
-            Home
-          </Link>
-
-          <Link
-            href="/showcase/projects"
-            className="transition hover:text-purple-600"
-          >
-            Projects
-          </Link>
-
-          <Link
-            href="/showcase/students"
-            className="transition hover:text-purple-600"
-          >
-            Students
-          </Link>
-
-          <Link
-            href="/showcase/products"
-            className="transition hover:text-purple-600"
-          >
-            Creations
-          </Link>
+        {/* Desktop Navigation */}
+        <div className="hidden items-center gap-8 md:flex">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-sm font-medium text-gray-800 transition hover:text-purple-600"
+            >
+              {link.label}
+            </Link>
+          ))}
 
           {isLoggedIn ? (
             <>
               <Link
                 href="/dashboard"
-                className="transition hover:text-purple-600"
+                className="text-sm font-medium text-gray-800 transition hover:text-purple-600"
               >
                 Dashboard
               </Link>
 
               <button
                 onClick={handleLogout}
-                className="rounded-lg bg-red-600 px-4 py-2 text-white transition hover:bg-red-700"
+                className="rounded-lg bg-red-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-red-700"
               >
                 Logout
               </button>
@@ -90,78 +93,59 @@ export default function Navbar() {
             <>
               <Link
                 href="/login"
-                className="transition hover:text-purple-600"
+                className="text-sm font-medium text-gray-800 transition hover:text-purple-600"
               >
                 Login
               </Link>
 
               <Link
                 href="/register"
-                className="rounded-lg bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-700"
+                className="rounded-lg bg-purple-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-purple-700"
               >
                 Register
               </Link>
             </>
           )}
         </div>
-      </div>
 
-      {menuOpen && (
-        <div className="border-t bg-white px-6 py-4 md:hidden">
+        {/* Mobile Menu Button */}
+        <button
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
+          className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 md:hidden"
+          aria-label="Toggle navigation menu"
+        >
+          {mobileMenuOpen ? "Close" : "Menu"}
+        </button>
+      </nav>
+
+      {/* Mobile Navigation */}
+      {mobileMenuOpen && (
+        <div className="border-t border-gray-200 bg-white px-6 py-4 md:hidden">
           <div className="flex flex-col gap-4">
-            <Link
-              href="/"
-              onClick={closeMenu}
-              className="transition hover:text-purple-600"
-            >
-              Home
-            </Link>
-
-            <Link
-              href="/showcase/projects"
-              onClick={closeMenu}
-              className="transition hover:text-purple-600"
-            >
-              About
-            </Link>
-
-            <Link
-              href="/showcase/projects"
-              onClick={closeMenu}
-              className="transition hover:text-purple-600"
-            >
-              Projects
-            </Link>
-
-            <Link
-              href="/showcase/students"
-              onClick={closeMenu}
-              className="transition hover:text-purple-600"
-            >
-              Students
-            </Link>
-
-            <Link
-              href="/showcase/products"
-              onClick={closeMenu}
-              className="transition hover:text-purple-600"
-            >
-              Creations
-            </Link>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-sm font-medium text-gray-800 transition hover:text-purple-600"
+              >
+                {link.label}
+              </Link>
+            ))}
 
             {isLoggedIn ? (
               <>
                 <Link
                   href="/dashboard"
-                  onClick={closeMenu}
-                  className="transition hover:text-purple-600"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm font-medium text-gray-800 transition hover:text-purple-600"
                 >
                   Dashboard
                 </Link>
 
                 <button
                   onClick={handleLogout}
-                  className="rounded-lg bg-red-600 px-4 py-2 text-left text-white transition hover:bg-red-700"
+                  className="w-fit rounded-lg bg-red-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-red-700"
                 >
                   Logout
                 </button>
@@ -170,16 +154,16 @@ export default function Navbar() {
               <>
                 <Link
                   href="/login"
-                  onClick={closeMenu}
-                  className="transition hover:text-purple-600"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm font-medium text-gray-800 transition hover:text-purple-600"
                 >
                   Login
                 </Link>
 
                 <Link
                   href="/register"
-                  onClick={closeMenu}
-                  className="rounded-lg bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-700"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-fit rounded-lg bg-purple-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-purple-700"
                 >
                   Register
                 </Link>
@@ -188,6 +172,6 @@ export default function Navbar() {
           </div>
         </div>
       )}
-    </nav>
+    </header>
   );
 }
