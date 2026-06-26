@@ -33,9 +33,9 @@ export default function HomePage() {
           getAllProducts(),
         ]);
 
-        setStudents(studentsData);
-        setProjects(projectsData);
-        setProducts(productsData);
+        setStudents(Array.isArray(studentsData) ? studentsData : []);
+        setProjects(Array.isArray(projectsData) ? projectsData : []);
+        setProducts(Array.isArray(productsData) ? productsData : []);
       } catch (error) {
         console.error("HOME PAGE DATA ERROR:", error);
       } finally {
@@ -60,22 +60,16 @@ export default function HomePage() {
   const visibleCreations =
     featuredCreations.length > 0 ? featuredCreations : products.slice(0, 4);
 
-  const getProjectImageUrl = (screenshot: string) => {
-    if (!screenshot) return "";
-
-    if (screenshot.startsWith("http")) {
-      return screenshot;
-    }
-
-    if (screenshot.startsWith("/uploads")) {
-      return `${BACKEND_URL}${screenshot}`;
-    }
-
-    return `${BACKEND_URL}/uploads/${screenshot}`;
-  };
-
-  const getProductImageUrl = (image: string) => {
+  const getUploadImageUrl = (image?: string) => {
     if (!image) return "";
+
+    if (image.startsWith("http://localhost:27017/uploads")) {
+      return image.replace("http://localhost:27017", BACKEND_URL);
+    }
+
+    if (image.startsWith("https://studentshowcase-backend.onrender.com")) {
+      return image;
+    }
 
     if (image.startsWith("http")) {
       return image;
@@ -102,10 +96,11 @@ export default function HomePage() {
     <main className="min-h-screen bg-slate-50">
       <Navbar />
 
+      {/* Hero Section */}
       <section className="mx-auto flex min-h-[75vh] max-w-7xl flex-col items-center justify-between gap-12 px-6 py-10 lg:flex-row lg:px-12">
         <div className="max-w-2xl text-center lg:text-left">
           <span className="rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-600">
-            🚀 Showcase Your Talent
+            🚀 Prompt Computer Classes Student Project Showcase
           </span>
 
           <h1 className="mt-6 text-5xl font-bold leading-tight md:text-6xl">
@@ -116,10 +111,11 @@ export default function HomePage() {
             Into A Portfolio
           </h1>
 
-          <p className="mt-6 text-lg text-gray-600">
-            Empowering students with practical coding skills, real-world
-            projects, and portfolio-ready experience to prepare them for
-            internships, hackathons, and future tech careers.
+          <p className="mt-6 text-lg leading-8 text-gray-600">
+            A student project showcase platform for Prompt Computer Classes
+            where students can display their projects, portfolios, skills,
+            creative work, and achievements for parents, visitors, and
+            admissions.
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
@@ -131,18 +127,18 @@ export default function HomePage() {
             </button>
 
             <button
-              onClick={() => router.push("/projects/create")}
+              onClick={() => router.push("/showcase/students")}
               className="rounded-xl border border-gray-300 px-8 py-4 font-medium transition hover:bg-gray-100"
             >
-              Add Project
+              View Students
             </button>
           </div>
         </div>
 
         <div className="relative hidden items-center justify-center lg:flex">
           <div className="relative h-[450px] w-[350px] overflow-hidden rounded-3xl bg-gradient-to-br from-purple-200 via-purple-400 to-purple-600 shadow-2xl">
-            <div className="absolute left-8 top-8 h-20 w-20 rounded-full bg-white/20"></div>
-            <div className="absolute bottom-10 right-8 h-28 w-28 rounded-full bg-white/20"></div>
+            <div className="absolute left-8 top-8 h-20 w-20 rounded-full bg-white/20" />
+            <div className="absolute bottom-10 right-8 h-28 w-28 rounded-full bg-white/20" />
 
             <div className="absolute left-1/2 top-16 flex -translate-x-1/2 flex-col items-center">
               <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-white bg-white text-5xl font-bold text-purple-600 shadow-xl">
@@ -150,13 +146,13 @@ export default function HomePage() {
               </div>
 
               <div className="mt-4 rounded-2xl bg-white/90 px-5 py-3 text-center shadow-lg">
-                <h4 className="font-bold text-gray-900">Future Coders</h4>
+                <h4 className="font-bold text-gray-900">Prompt Coders</h4>
                 <p className="text-sm text-gray-600">Computer Classes</p>
               </div>
             </div>
 
             <div className="absolute bottom-6 left-6 right-6 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-white/90 p-2 text-center shadow">
+              <div className="rounded-2xl bg-white/90 p-3 text-center shadow">
                 <p className="text-xl">💻</p>
                 <p className="text-xs font-semibold">Web Dev</p>
               </div>
@@ -192,6 +188,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Stats Section */}
       <section className="mx-auto max-w-6xl px-6 py-16">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div className="rounded-2xl bg-white p-6 text-center shadow">
@@ -222,13 +219,59 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* SEO Content Section */}
+      <section className="mx-auto max-w-5xl px-6 py-16 text-center">
+        <h2 className="text-3xl font-bold text-gray-950 md:text-4xl">
+          About Prompt Computer Classes Student Project Showcase
+        </h2>
+
+        <p className="mt-5 text-base leading-8 text-gray-600 md:text-lg">
+          Prompt Computer Classes Student Project Showcase is a full-stack web
+          platform where students can showcase their projects, portfolios,
+          technical skills, and creative work. It helps parents, visitors, and
+          new students explore the practical work done by students at Prompt
+          Computer Classes.
+        </p>
+
+        <p className="mt-4 text-base leading-8 text-gray-600 md:text-lg">
+          This platform includes student profiles, project details, creations,
+          achievements, and technology-based work built using modern web
+          development tools like Next.js, TypeScript, Node.js, Express.js, and
+          MongoDB.
+        </p>
+
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <span className="rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-700">
+            Student Projects
+          </span>
+          <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700">
+            Student Portfolios
+          </span>
+          <span className="rounded-full bg-blue-100 px-4 py-2 text-sm font-medium text-blue-700">
+            Coding Skills
+          </span>
+          <span className="rounded-full bg-yellow-100 px-4 py-2 text-sm font-medium text-yellow-700">
+            Creative Work
+          </span>
+        </div>
+      </section>
+
+      {/* Featured Projects */}
       <section className="mx-auto max-w-7xl px-6 py-20">
-        <div className="mb-10 flex items-center justify-between">
-          <h2 className="text-4xl font-bold">Featured Projects</h2>
+        <div className="mb-10 flex items-center justify-between gap-4">
+          <div>
+            <h2 className="text-4xl font-bold text-gray-950">
+              Featured Student Projects
+            </h2>
+            <p className="mt-2 text-gray-600">
+              Explore practical projects created by Prompt Computer Classes
+              students.
+            </p>
+          </div>
 
           <button
             onClick={() => router.push("/showcase/projects")}
-            className="font-medium text-purple-600 hover:underline"
+            className="shrink-0 font-medium text-purple-600 hover:underline"
           >
             View All →
           </button>
@@ -251,15 +294,11 @@ export default function HomePage() {
               >
                 {project.screenshot ? (
                   <Image
-                    src={getProjectImageUrl(project.screenshot)}
+                    src={getUploadImageUrl(project.screenshot)}
                     alt={project.title}
                     width={600}
                     height={400}
                     className="h-40 w-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src =
-                        "https://placehold.co/600x400?text=No+Image";
-                    }}
                   />
                 ) : (
                   <div className="flex h-40 items-center justify-center bg-purple-100 text-gray-400">
@@ -274,7 +313,9 @@ export default function HomePage() {
                     </span>
                   )}
 
-                  <h3 className="line-clamp-1 font-bold">{project.title}</h3>
+                  <h3 className="line-clamp-1 font-bold text-gray-950">
+                    {project.title}
+                  </h3>
 
                   <p className="mt-2 line-clamp-2 text-sm text-gray-500">
                     {project.description}
@@ -301,13 +342,22 @@ export default function HomePage() {
         )}
       </section>
 
+      {/* Featured Creations */}
       <section className="mx-auto max-w-7xl px-6 pb-20">
-        <div className="mb-10 flex items-center justify-between">
-          <h2 className="text-4xl font-bold">Featured Creations</h2>
+        <div className="mb-10 flex items-center justify-between gap-4">
+          <div>
+            <h2 className="text-4xl font-bold text-gray-950">
+              Featured Student Creations
+            </h2>
+            <p className="mt-2 text-gray-600">
+              Explore creative and technical work by Prompt Computer Classes
+              students.
+            </p>
+          </div>
 
           <button
             onClick={() => router.push("/showcase/products")}
-            className="font-medium text-purple-600 hover:underline"
+            className="shrink-0 font-medium text-purple-600 hover:underline"
           >
             View All →
           </button>
@@ -330,15 +380,11 @@ export default function HomePage() {
               >
                 {product.image ? (
                   <Image
-                    src={getProductImageUrl(product.image)}
+                    src={getUploadImageUrl(product.image)}
                     alt={product.name}
                     width={600}
                     height={400}
                     className="h-40 w-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src =
-                        "https://placehold.co/600x400?text=No+Creation";
-                    }}
                   />
                 ) : (
                   <div className="flex h-40 items-center justify-center bg-green-100 text-gray-400">
@@ -353,7 +399,9 @@ export default function HomePage() {
                     </span>
                   )}
 
-                  <h3 className="line-clamp-1 font-bold">{product.name}</h3>
+                  <h3 className="line-clamp-1 font-bold text-gray-950">
+                    {product.name}
+                  </h3>
 
                   <p className="mt-2 line-clamp-2 text-sm text-gray-500">
                     {product.description || "No description added"}
@@ -378,6 +426,56 @@ export default function HomePage() {
             ))}
           </div>
         )}
+      </section>
+
+      {/* Why This Platform */}
+      <section className="bg-white px-6 py-20">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-950 md:text-4xl">
+              Why Prompt Computer Classes Uses This Showcase
+            </h2>
+
+            <p className="mx-auto mt-4 max-w-3xl text-base leading-8 text-gray-600 md:text-lg">
+              This platform helps parents, visitors, and new students see real
+              practical work instead of only reading about courses. Students can
+              build confidence by presenting their projects and portfolios
+              publicly.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-8 md:grid-cols-3">
+            <div className="rounded-3xl bg-slate-50 p-8 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-950">
+                For Students
+              </h3>
+              <p className="mt-3 leading-7 text-gray-600">
+                Students can showcase their projects, skills, GitHub links,
+                live demos, and creative work in one professional place.
+              </p>
+            </div>
+
+            <div className="rounded-3xl bg-slate-50 p-8 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-950">
+                For Parents
+              </h3>
+              <p className="mt-3 leading-7 text-gray-600">
+                Parents can easily see what students are learning and building
+                at Prompt Computer Classes through real project examples.
+              </p>
+            </div>
+
+            <div className="rounded-3xl bg-slate-50 p-8 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-950">
+                For Visitors
+              </h3>
+              <p className="mt-3 leading-7 text-gray-600">
+                New visitors can understand the practical learning environment,
+                student progress, and project-based training approach.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
   );
