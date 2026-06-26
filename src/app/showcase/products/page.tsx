@@ -19,8 +19,16 @@ export default function ShowcaseProductsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const getProductImageUrl = (image: string) => {
+  const getProductImageUrl = (image?: string) => {
     if (!image) return "";
+
+    if (image.startsWith("http://localhost:27017/uploads")) {
+      return image.replace("http://localhost:27017", BACKEND_URL);
+    }
+
+    if (image.startsWith("https://studentshowcase-backend.onrender.com")) {
+      return image;
+    }
 
     if (image.startsWith("http")) {
       return image;
@@ -44,6 +52,13 @@ export default function ShowcaseProductsPage() {
         product.description,
         product.category,
         product.price?.toString(),
+        "Prompt Computer Classes",
+        "student creations",
+        "student creative work",
+        "student project showcase",
+        "coding projects",
+        "computer classes creations",
+        "student portfolio work",
       ]
         .filter(Boolean)
         .join(" ")
@@ -59,7 +74,7 @@ export default function ShowcaseProductsPage() {
 
       console.log("SHOWCASE CREATIONS:", data);
 
-      setProducts(data);
+      setProducts(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("SHOWCASE CREATIONS ERROR:", error);
     } finally {
@@ -76,8 +91,8 @@ export default function ShowcaseProductsPage() {
       <main className="min-h-screen bg-slate-50">
         <Navbar />
 
-        <div className="flex min-h-[70vh] items-center justify-center text-lg font-semibold">
-          Loading Creations...
+        <div className="flex min-h-[70vh] items-center justify-center text-lg font-semibold text-gray-700">
+          Loading Prompt Computer Classes student creations...
         </div>
       </main>
     );
@@ -88,21 +103,58 @@ export default function ShowcaseProductsPage() {
       <Navbar />
 
       <section className="mx-auto max-w-7xl px-6 py-16">
+        {/* Page Header */}
         <div className="mb-12 text-center">
           <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-600">
-            💡 Student Creations
+            💡 Prompt Computer Classes Student Creations
           </span>
 
-          <h1 className="mt-6 text-5xl font-bold">
-            Explore Student Creations
+          <h1 className="mt-6 text-4xl font-bold text-gray-950 md:text-5xl">
+            Prompt Computer Classes Student Creations
           </h1>
 
-          <p className="mx-auto mt-4 max-w-2xl text-gray-600">
-            Discover creative builds, prototypes, tools, apps, and portfolio
-            work uploaded by students as part of their learning journey.
+          <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-gray-600 md:text-lg">
+            Explore creative builds, prototypes, tools, apps, designs, and
+            portfolio work created by students of Prompt Computer Classes. This
+            page helps parents, visitors, and new students discover the
+            practical and creative learning journey of students.
           </p>
         </div>
 
+        {/* SEO Intro Section */}
+        <div className="mb-10 rounded-3xl bg-white p-6 shadow-sm md:p-8">
+          <h2 className="text-2xl font-bold text-gray-950">
+            Creative Work and Practical Learning
+          </h2>
+
+          <p className="mt-3 leading-7 text-gray-600">
+            Prompt Computer Classes Student Project Showcase gives students a
+            professional platform to display their creative work, technical
+            creations, prototypes, tools, apps, and portfolio items. Visitors can
+            explore the practical results of project-based learning and coding
+            practice.
+          </p>
+
+          <div className="mt-5 flex flex-wrap gap-3">
+            <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700">
+              Student Creations
+            </span>
+
+            <span className="rounded-full bg-purple-100 px-4 py-2 text-sm font-medium text-purple-700">
+              Portfolio Work
+            </span>
+
+            <span className="rounded-full bg-blue-100 px-4 py-2 text-sm font-medium text-blue-700">
+              Apps and Tools
+            </span>
+
+            <span className="rounded-full bg-yellow-100 px-4 py-2 text-sm font-medium text-yellow-700">
+              Creative Projects
+            </span>
+          </div>
+        </div>
+
+        {/* Controls */}
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap items-center gap-3">
             <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700">
@@ -121,41 +173,43 @@ export default function ShowcaseProductsPage() {
 
           <button
             onClick={() => router.push("/showcase/projects")}
-            className="rounded-lg border px-4 py-2 text-sm font-medium transition hover:bg-white"
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium transition hover:bg-white"
           >
-            View Projects →
+            View Student Projects →
           </button>
         </div>
 
+        {/* Search */}
         <div className="mb-10 rounded-2xl bg-white p-4 shadow">
           <input
             type="text"
-            placeholder="Search creations by name, category, description..."
+            placeholder="Search Prompt Computer Classes creations by name, category, description..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border px-4 py-3 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
+            className="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
           />
         </div>
 
+        {/* Creations */}
         {filteredProducts.length === 0 ? (
           <div className="rounded-2xl bg-white p-12 text-center shadow">
             <p className="text-gray-500">
               {searchQuery
                 ? "No creations matched your search."
-                : "No creations found."}
+                : "No Prompt Computer Classes student creations found."}
             </p>
           </div>
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {filteredProducts.map((product) => (
-              <div
+              <article
                 key={product._id}
                 className="overflow-hidden rounded-3xl bg-white shadow transition hover:-translate-y-2 hover:shadow-xl"
               >
                 {product.image ? (
                   <Image
                     src={getProductImageUrl(product.image)}
-                    alt={product.name}
+                    alt={`${product.name} - Prompt Computer Classes student creation`}
                     width={600}
                     height={400}
                     className="h-56 w-full bg-slate-100 object-contain"
@@ -173,11 +227,13 @@ export default function ShowcaseProductsPage() {
                 <div className="p-6">
                   {product.isFeatured && (
                     <span className="mb-3 inline-block rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">
-                      ⭐ Featured
+                      ⭐ Featured Creation
                     </span>
                   )}
 
-                  <h2 className="text-2xl font-bold">{product.name}</h2>
+                  <h2 className="text-2xl font-bold text-gray-950">
+                    {product.name}
+                  </h2>
 
                   <p className="mt-3 line-clamp-3 text-sm leading-6 text-gray-600">
                     {product.description || "No description added."}
@@ -191,7 +247,7 @@ export default function ShowcaseProductsPage() {
 
                     {product.price ? (
                       <p className="mt-2 text-sm text-gray-600">
-                        <span className="font-semibold">Estimated Value:</span>{" "}
+                        <span className="font-semibold">Showcase Value:</span>{" "}
                         ₹{product.price}
                       </p>
                     ) : (
@@ -202,16 +258,25 @@ export default function ShowcaseProductsPage() {
                     )}
                   </div>
 
-                  <button
-                    onClick={() =>
-                      router.push(`/showcase/products/${product._id}`)
-                    }
-                    className="mt-5 rounded-lg bg-green-600 px-4 py-2 text-sm text-white transition hover:bg-green-700"
-                  >
-                    View Creation
-                  </button>
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <button
+                      onClick={() =>
+                        router.push(`/showcase/products/${product._id}`)
+                      }
+                      className="rounded-lg bg-green-600 px-4 py-2 text-sm text-white transition hover:bg-green-700"
+                    >
+                      View Creation
+                    </button>
+
+                    <button
+                      onClick={() => router.push("/showcase/projects")}
+                      className="rounded-lg border border-green-600 px-4 py-2 text-sm text-green-600 transition hover:bg-green-50"
+                    >
+                      Explore Projects
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         )}
