@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import Navbar from "@/components/layout/Navbar";
-import { getAllStudents } from "@/services/studentService";
+import { getAllUsers } from "@/services/userService";
 import { getAllProjects } from "@/services/projectService";
 import { getAllProducts } from "@/services/productService";
 
-import { Student } from "@/types/student";
+import { User } from "@/types/user";
 import { Project } from "@/types/project";
 import { Product } from "@/types/product";
 
@@ -19,7 +19,7 @@ const BACKEND_URL =
 export default function HomePage() {
   const router = useRouter();
 
-  const [students, setStudents] = useState<Student[]>([]);
+  const [students, setStudents] = useState<User[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,17 +27,22 @@ export default function HomePage() {
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
-        const [studentsData, projectsData, productsData] = await Promise.all([
-          getAllStudents(),
-          getAllProjects(),
-          getAllProducts(),
-        ]);
+        const [studentsData, projectsData, productsData] =
+          await Promise.all([
+            getAllUsers(),
+            getAllProjects(),
+            getAllProducts(),
+          ]);
 
-        setStudents(Array.isArray(studentsData) ? studentsData : []);
+        setStudents(studentsData);
         setProjects(Array.isArray(projectsData) ? projectsData : []);
         setProducts(Array.isArray(productsData) ? productsData : []);
       } catch (error) {
         console.error("HOME PAGE DATA ERROR:", error);
+
+        setStudents([]);
+        setProjects([]);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -51,23 +56,34 @@ export default function HomePage() {
     .slice(0, 4);
 
   const visibleProjects =
-    featuredProjects.length > 0 ? featuredProjects : projects.slice(0, 4);
+    featuredProjects.length > 0
+      ? featuredProjects
+      : projects.slice(0, 4);
 
   const featuredCreations = products
     .filter((product) => product.isFeatured)
     .slice(0, 4);
 
   const visibleCreations =
-    featuredCreations.length > 0 ? featuredCreations : products.slice(0, 4);
+    featuredCreations.length > 0
+      ? featuredCreations
+      : products.slice(0, 4);
 
   const getUploadImageUrl = (image?: string) => {
     if (!image) return "";
 
     if (image.startsWith("http://localhost:27017/uploads")) {
-      return image.replace("http://localhost:27017", BACKEND_URL);
+      return image.replace(
+        "http://localhost:27017",
+        BACKEND_URL
+      );
     }
 
-    if (image.startsWith("https://studentshowcase-backend.onrender.com")) {
+    if (
+      image.startsWith(
+        "https://studentshowcase-backend.onrender.com"
+      )
+    ) {
       return image;
     }
 
@@ -82,7 +98,9 @@ export default function HomePage() {
     return `${BACKEND_URL}/uploads/${image}`;
   };
 
-  const getProjectTechStack = (techStack?: string[] | string) => {
+  const getProjectTechStack = (
+    techStack?: string[] | string
+  ) => {
     if (!techStack) return "";
 
     if (Array.isArray(techStack)) {
@@ -106,28 +124,32 @@ export default function HomePage() {
           <h1 className="mt-6 text-5xl font-bold leading-tight md:text-6xl">
             Turn Your
             <br />
-            <span className="text-purple-600">Student Projects</span>
+            <span className="text-purple-600">
+              Student Projects
+            </span>
             <br />
             Into A Portfolio
           </h1>
 
           <p className="mt-6 text-lg leading-8 text-gray-600">
-            A student project showcase platform for Prompt Computer Classes
-            where students can display their projects, portfolios, skills,
-            creative work, and achievements for parents, visitors, and
-            admissions.
+            A student project showcase platform for Prompt
+            Computer Classes where students can display their
+            projects, portfolios, skills, creative work, and
+            achievements for parents, visitors, and admissions.
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
             <button
-              onClick={() => router.push("/showcase/projects")}
+              onClick={() =>
+                router.push("/showcase/projects")
+              }
               className="rounded-xl bg-purple-600 px-8 py-4 font-medium text-white transition hover:bg-purple-700"
             >
               Explore Projects
             </button>
 
             <button
-              onClick={() => router.push("/showcase/students")}
+              onClick={() => router.push("/showcase/users")}
               className="rounded-xl border border-gray-300 px-8 py-4 font-medium transition hover:bg-gray-100"
             >
               View Students
@@ -146,30 +168,42 @@ export default function HomePage() {
               </div>
 
               <div className="mt-4 rounded-2xl bg-white/90 px-5 py-3 text-center shadow-lg">
-                <h4 className="font-bold text-gray-900">Prompt Coders</h4>
-                <p className="text-sm text-gray-600">Computer Classes</p>
+                <h4 className="font-bold text-gray-900">
+                  Prompt Coders
+                </h4>
+                <p className="text-sm text-gray-600">
+                  Computer Classes
+                </p>
               </div>
             </div>
 
             <div className="absolute bottom-6 left-6 right-6 grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-white/90 p-3 text-center shadow">
                 <p className="text-xl">💻</p>
-                <p className="text-xs font-semibold">Web Dev</p>
+                <p className="text-xs font-semibold">
+                  Web Dev
+                </p>
               </div>
 
               <div className="rounded-2xl bg-white/90 p-3 text-center shadow">
                 <p className="text-xl">🤖</p>
-                <p className="text-xs font-semibold">AI Basics</p>
+                <p className="text-xs font-semibold">
+                  AI Basics
+                </p>
               </div>
 
               <div className="rounded-2xl bg-white/90 p-3 text-center shadow">
                 <p className="text-xl">📚</p>
-                <p className="text-xs font-semibold">DSA</p>
+                <p className="text-xs font-semibold">
+                  DSA
+                </p>
               </div>
 
               <div className="rounded-2xl bg-white/90 p-3 text-center shadow">
                 <p className="text-xl">🚀</p>
-                <p className="text-xs font-semibold">Projects</p>
+                <p className="text-xs font-semibold">
+                  Projects
+                </p>
               </div>
             </div>
           </div>
@@ -182,8 +216,12 @@ export default function HomePage() {
           </div>
 
           <div className="absolute -right-8 bottom-16 rounded-2xl bg-white p-4 shadow-xl">
-            <h4 className="font-semibold">{projects.length} Projects</h4>
-            <p className="text-sm text-gray-500">Completed</p>
+            <h4 className="font-semibold">
+              {projects.length} Projects
+            </h4>
+            <p className="text-sm text-gray-500">
+              Completed
+            </p>
           </div>
         </div>
       </section>
@@ -213,8 +251,12 @@ export default function HomePage() {
           </div>
 
           <div className="rounded-2xl bg-white p-6 text-center shadow">
-            <h2 className="text-4xl font-bold text-purple-600">10+</h2>
-            <p className="mt-2 text-gray-600">Technologies</p>
+            <h2 className="text-4xl font-bold text-purple-600">
+              10+
+            </h2>
+            <p className="mt-2 text-gray-600">
+              Technologies
+            </p>
           </div>
         </div>
       </section>
@@ -226,18 +268,19 @@ export default function HomePage() {
         </h2>
 
         <p className="mt-5 text-base leading-8 text-gray-600 md:text-lg">
-          Prompt Computer Classes Student Project Showcase is a full-stack web
-          platform where students can showcase their projects, portfolios,
-          technical skills, and creative work. It helps parents, visitors, and
-          new students explore the practical work done by students at Prompt
-          Computer Classes.
+          Prompt Computer Classes Student Project Showcase is a
+          full-stack web platform where students can showcase
+          their projects, portfolios, technical skills, and
+          creative work. It helps parents, visitors, and new
+          students explore the practical work done by students at
+          Prompt Computer Classes.
         </p>
 
         <p className="mt-4 text-base leading-8 text-gray-600 md:text-lg">
-          This platform includes student profiles, project details, creations,
-          achievements, and technology-based work built using modern web
-          development tools like Next.js, TypeScript, Node.js, Express.js, and
-          MongoDB.
+          This platform includes student profiles, project
+          details, creations, achievements, and technology-based
+          work built using modern web development tools like
+          Next.js, TypeScript, Node.js, Express.js, and MongoDB.
         </p>
 
         <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -264,13 +307,15 @@ export default function HomePage() {
               Featured Student Projects
             </h2>
             <p className="mt-2 text-gray-600">
-              Explore practical projects created by Prompt Computer Classes
-              students.
+              Explore practical projects created by Prompt
+              Computer Classes students.
             </p>
           </div>
 
           <button
-            onClick={() => router.push("/showcase/projects")}
+            onClick={() =>
+              router.push("/showcase/projects")
+            }
             className="shrink-0 font-medium text-purple-600 hover:underline"
           >
             View All →
@@ -283,7 +328,9 @@ export default function HomePage() {
           </div>
         ) : visibleProjects.length === 0 ? (
           <div className="rounded-2xl bg-white p-10 text-center shadow">
-            <p className="text-gray-500">No projects found.</p>
+            <p className="text-gray-500">
+              No projects found.
+            </p>
           </div>
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
@@ -329,7 +376,9 @@ export default function HomePage() {
 
                   <button
                     onClick={() =>
-                      router.push(`/showcase/projects/${project._id}`)
+                      router.push(
+                        `/showcase/projects/${project._id}`
+                      )
                     }
                     className="mt-4 rounded-lg bg-purple-600 px-4 py-2 text-sm text-white transition hover:bg-purple-700"
                   >
@@ -350,13 +399,15 @@ export default function HomePage() {
               Featured Student Creations
             </h2>
             <p className="mt-2 text-gray-600">
-              Explore creative and technical work by Prompt Computer Classes
-              students.
+              Explore creative and technical work by Prompt
+              Computer Classes students.
             </p>
           </div>
 
           <button
-            onClick={() => router.push("/showcase/products")}
+            onClick={() =>
+              router.push("/showcase/products")
+            }
             className="shrink-0 font-medium text-purple-600 hover:underline"
           >
             View All →
@@ -369,7 +420,9 @@ export default function HomePage() {
           </div>
         ) : visibleCreations.length === 0 ? (
           <div className="rounded-2xl bg-white p-10 text-center shadow">
-            <p className="text-gray-500">No creations found.</p>
+            <p className="text-gray-500">
+              No creations found.
+            </p>
           </div>
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
@@ -404,7 +457,8 @@ export default function HomePage() {
                   </h3>
 
                   <p className="mt-2 line-clamp-2 text-sm text-gray-500">
-                    {product.description || "No description added"}
+                    {product.description ||
+                      "No description added"}
                   </p>
 
                   {product.category && (
@@ -415,7 +469,9 @@ export default function HomePage() {
 
                   <button
                     onClick={() =>
-                      router.push(`/showcase/products/${product._id}`)
+                      router.push(
+                        `/showcase/products/${product._id}`
+                      )
                     }
                     className="mt-4 rounded-lg bg-green-600 px-4 py-2 text-sm text-white transition hover:bg-green-700"
                   >
@@ -437,10 +493,10 @@ export default function HomePage() {
             </h2>
 
             <p className="mx-auto mt-4 max-w-3xl text-base leading-8 text-gray-600 md:text-lg">
-              This platform helps parents, visitors, and new students see real
-              practical work instead of only reading about courses. Students can
-              build confidence by presenting their projects and portfolios
-              publicly.
+              This platform helps parents, visitors, and new
+              students see real practical work instead of only
+              reading about courses. Students can build confidence
+              by presenting their projects and portfolios publicly.
             </p>
           </div>
 
@@ -450,8 +506,9 @@ export default function HomePage() {
                 For Students
               </h3>
               <p className="mt-3 leading-7 text-gray-600">
-                Students can showcase their projects, skills, GitHub links,
-                live demos, and creative work in one professional place.
+                Students can showcase their projects, skills,
+                GitHub links, live demos, and creative work in one
+                professional place.
               </p>
             </div>
 
@@ -460,8 +517,9 @@ export default function HomePage() {
                 For Parents
               </h3>
               <p className="mt-3 leading-7 text-gray-600">
-                Parents can easily see what students are learning and building
-                at Prompt Computer Classes through real project examples.
+                Parents can easily see what students are learning
+                and building at Prompt Computer Classes through
+                real project examples.
               </p>
             </div>
 
@@ -470,8 +528,9 @@ export default function HomePage() {
                 For Visitors
               </h3>
               <p className="mt-3 leading-7 text-gray-600">
-                New visitors can understand the practical learning environment,
-                student progress, and project-based training approach.
+                New visitors can understand the practical learning
+                environment, student progress, and project-based
+                training approach.
               </p>
             </div>
           </div>

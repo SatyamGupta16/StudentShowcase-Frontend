@@ -8,9 +8,9 @@ import { useParams, useRouter } from "next/navigation";
 import AdminGuard from "@/components/auth/AdminGuard";
 
 import {
-  getStudentById,
-  updateStudent,
-} from "@/services/studentService";
+  getUserById,
+  updateUser,
+} from "@/services/userService";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,11 +22,11 @@ import {
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:27017";
 
-export default function EditStudentPage() {
+export default function EditUserPage() {
   const params = useParams();
   const router = useRouter();
 
-  const studentId = params.id as string;
+  const userId = params.id as string;
 
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -68,34 +68,34 @@ export default function EditStudentPage() {
     return skills;
   };
 
-  const fetchStudent = useCallback(async () => {
-    try {
-      const student = await getStudentById(studentId);
+const fetchUser = useCallback(async () => {
+  try {
+    const user = await getUserById(userId);
 
-      console.log("EDIT STUDENT DATA:", student);
+    console.log("EDIT USER DATA:", user);
 
-      setFormData({
-        name: student.name || "",
-        email: student.email || "",
-        bio: student.bio || "",
-        github: student.github || "",
-        linkedin: student.linkedin || "",
-        batch: student.batch || "",
-        skills: formatSkills(student.skills),
-      });
+    setFormData({
+      name: user.name || "",
+      email: user.email || "",
+      bio: user.bio || "",
+      github: user.github || "",
+      linkedin: user.linkedin || "",
+      batch: user.batch || "",
+      skills: formatSkills(user.skills),
+    });
 
-      setPreviewPhoto(student.profilePhoto || "");
-    } catch (error) {
-      console.error("FETCH STUDENT ERROR:", error);
-      alert("Failed to load student");
-    } finally {
-      setLoading(false);
-    }
-  }, [studentId]);
+    setPreviewPhoto(user.profilePhoto || "");
+  } catch (error) {
+    console.error("FETCH USER ERROR:", error);
+    alert("Failed to load user");
+  } finally {
+    setLoading(false);
+  }
+}, [userId]);
 
-  useEffect(() => {
-    fetchStudent();
-  }, [fetchStudent]);
+useEffect(() => {
+  fetchUser();
+}, [fetchUser]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -148,25 +148,25 @@ export default function EditStudentPage() {
 
       console.log("UPDATE FORM DATA READY");
 
-      const response = await updateStudent(studentId, payload);
+      const response = await updateUser(userId, payload);
 
       console.log("UPDATE RESPONSE:", response);
 
-      alert("Student updated successfully");
+      alert("User updated successfully");
 
-      router.push("/students");
+      router.push("/users");
     } catch (error: unknown) {
       console.log("UPDATE ERROR:", error);
 
       if (axios.isAxiosError(error)) {
         alert(
           error.response?.data?.message ||
-            "Failed to update student"
+            "Failed to update user"
         );
       } else if (error instanceof Error) {
         alert(error.message);
       } else {
-        alert("Failed to update student");
+        alert("Failed to update user");
       }
     } finally {
       setUpdating(false);
@@ -177,7 +177,7 @@ export default function EditStudentPage() {
     return (
       <AdminGuard>
         <div className="p-10">
-          Loading Student...
+          Loading User...
         </div>
       </AdminGuard>
     );
@@ -190,13 +190,13 @@ export default function EditStudentPage() {
           <CardContent className="p-8">
             <div className="mb-6 flex items-center justify-between">
               <h1 className="text-3xl font-bold">
-                Edit Student
+                Edit User
               </h1>
 
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.push("/students")}
+                onClick={() => router.push("/users")}
               >
                 Back
               </Button>
@@ -221,7 +221,7 @@ export default function EditStudentPage() {
                     className="h-28 w-28 rounded-full object-cover"
                     onError={(e) => {
                       e.currentTarget.src =
-                        "https://placehold.co/200x200?text=Student";
+                        "https://placehold.co/200x200?text=User";
                     }}
                   />
                 </div>
@@ -247,7 +247,7 @@ export default function EditStudentPage() {
 
               <Input
                 name="name"
-                placeholder="Student Name"
+                placeholder="Full Name"
                 value={formData.name}
                 onChange={handleChange}
                 required
@@ -303,7 +303,7 @@ export default function EditStudentPage() {
                 className="w-full"
                 disabled={updating}
               >
-                {updating ? "Updating..." : "Update Student"}
+                {updating ? "Updating..." : "Update User"}
               </Button>
             </form>
           </CardContent>

@@ -48,7 +48,7 @@ export default function Footer() {
             </Link>
 
             <Link
-              href="/showcase/students"
+              href="/showcase/users"
               className="transition hover:text-purple-600"
             >
               Students

@@ -14,10 +14,15 @@ export default function RegisterPage() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] =
+    useState("");
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
 
+  // =======================
+  // Handle Registration
+  // =======================
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
@@ -26,24 +31,34 @@ export default function RegisterPage() {
     try {
       setLoading(true);
 
-      await registerUser({
+      const data = await registerUser({
         name,
         email,
         password,
       });
 
-      alert("Registration successful");
+      if (!data.success) {
+        throw new Error(data.message);
+      }
 
+      alert("Registration successful!");
+
+      // Redirect to Login Page
       router.push("/login");
     } catch (error: unknown) {
-      console.log("REGISTER ERROR:", error);
+      console.error(
+        "REGISTER ERROR:",
+        error
+      );
 
       if (axios.isAxiosError(error)) {
         alert(
-          error.response?.data?.message ||
+          error.response?.data?.message ??
             "Registration failed"
         );
-      } else if (error instanceof Error) {
+      } else if (
+        error instanceof Error
+      ) {
         alert(error.message);
       } else {
         alert("Registration failed");
@@ -63,16 +78,18 @@ export default function RegisterPage() {
           </h1>
 
           <p className="mt-2 text-gray-500">
-            Register to access the Student Project Showcase Dashboard
+            Register to access the Student
+            Project Showcase Dashboard
           </p>
         </div>
 
-        {/* Form */}
+        {/* Registration Form */}
         <form
           onSubmit={handleSubmit}
           className="rounded-3xl border bg-white p-8 shadow-lg"
         >
           <div className="space-y-5">
+            {/* Name */}
             <div>
               <label className="mb-2 block text-sm font-medium">
                 Full Name
@@ -89,6 +106,7 @@ export default function RegisterPage() {
               />
             </div>
 
+            {/* Email */}
             <div>
               <label className="mb-2 block text-sm font-medium">
                 Email
@@ -105,6 +123,7 @@ export default function RegisterPage() {
               />
             </div>
 
+            {/* Password */}
             <div>
               <label className="mb-2 block text-sm font-medium">
                 Password
@@ -121,12 +140,15 @@ export default function RegisterPage() {
               />
             </div>
 
+            {/* Submit Button */}
             <Button
               type="submit"
               disabled={loading}
               className="w-full bg-purple-600 hover:bg-purple-700"
             >
-              {loading ? "Creating Account..." : "Register"}
+              {loading
+                ? "Creating Account..."
+                : "Register"}
             </Button>
           </div>
         </form>

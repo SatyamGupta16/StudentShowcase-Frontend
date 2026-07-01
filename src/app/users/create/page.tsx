@@ -4,21 +4,27 @@ import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { createStudent } from "@/services/studentService";
+import { createUser } from "@/services/userService";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card";
 
-export default function CreateStudentPage() {
+export default function CreateUserPage() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
-  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
+
+  const [profilePhoto, setProfilePhoto] =
+    useState<File | null>(null);
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    password: "",
     bio: "",
     github: "",
     linkedin: "",
@@ -26,6 +32,9 @@ export default function CreateStudentPage() {
     skills: "",
   });
 
+  // =======================
+  // Handle Input Change
+  // =======================
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -35,6 +44,9 @@ export default function CreateStudentPage() {
     }));
   };
 
+  // =======================
+  // Handle Image Change
+  // =======================
   const handleImageChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -43,6 +55,9 @@ export default function CreateStudentPage() {
     }
   };
 
+  // =======================
+  // Create User
+  // =======================
   const handleSubmit = async (
     e: React.FormEvent
   ) => {
@@ -51,17 +66,34 @@ export default function CreateStudentPage() {
     try {
       setLoading(true);
 
-      const studentPayload = new FormData();
+      const userPayload = new FormData();
 
-      studentPayload.append("name", formData.name);
-      studentPayload.append("email", formData.email);
-      studentPayload.append("bio", formData.bio);
-      studentPayload.append("github", formData.github);
-      studentPayload.append("linkedin", formData.linkedin);
-      studentPayload.append("batch", formData.batch);
-      studentPayload.append("isFeatured", "false");
+      userPayload.append("name", formData.name);
+      userPayload.append("email", formData.email);
+      userPayload.append(
+        "password",
+        formData.password
+      );
+      userPayload.append("bio", formData.bio);
+      userPayload.append(
+        "github",
+        formData.github
+      );
+      userPayload.append(
+        "linkedin",
+        formData.linkedin
+      );
+      userPayload.append(
+        "batch",
+        formData.batch
+      );
 
-      studentPayload.append(
+      userPayload.append(
+        "isFeatured",
+        "false"
+      );
+
+      userPayload.append(
         "skills",
         JSON.stringify(
           formData.skills
@@ -72,36 +104,45 @@ export default function CreateStudentPage() {
       );
 
       if (profilePhoto) {
-        studentPayload.append("profilePhoto", profilePhoto);
+        userPayload.append(
+          "profilePhoto",
+          profilePhoto
+        );
       }
 
       console.log(
-        "TOKEN BEFORE CREATE:",
+        "TOKEN:",
         localStorage.getItem("token")
       );
 
-      const response = await createStudent(studentPayload);
+      const createdUser =
+        await createUser(userPayload);
 
-      console.log("CREATE STUDENT RESPONSE:", response);
+      console.log(
+        "CREATE USER RESPONSE:",
+        createdUser
+      );
 
-      alert("Student created successfully");
+      alert("User created successfully.");
 
-      router.push("/students");
+      router.push("/users");
     } catch (error: unknown) {
-      console.log("FULL ERROR:", error);
+      console.error(
+        "CREATE USER ERROR:",
+        error
+      );
 
       if (axios.isAxiosError(error)) {
-        console.log("RESPONSE:", error.response?.data);
-        console.log("STATUS:", error.response?.status);
-
         alert(
           error.response?.data?.message ||
-            "Failed to create student"
+            "Failed to create user."
         );
-      } else if (error instanceof Error) {
+      } else if (
+        error instanceof Error
+      ) {
         alert(error.message);
       } else {
-        alert("Failed to create student");
+        alert("Failed to create user.");
       }
     } finally {
       setLoading(false);
@@ -113,7 +154,7 @@ export default function CreateStudentPage() {
       <Card className="w-full max-w-2xl">
         <CardContent className="p-8">
           <h1 className="mb-6 text-3xl font-bold">
-            Create Student
+            Create User
           </h1>
 
           <form
@@ -122,7 +163,7 @@ export default function CreateStudentPage() {
           >
             <Input
               name="name"
-              placeholder="Student Name"
+              placeholder="Full Name"
               value={formData.name}
               onChange={handleChange}
               required
@@ -138,6 +179,15 @@ export default function CreateStudentPage() {
             />
 
             <Input
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+
+            <Input
               name="bio"
               placeholder="Bio"
               value={formData.bio}
@@ -146,14 +196,14 @@ export default function CreateStudentPage() {
 
             <Input
               name="skills"
-              placeholder="Skills comma separated e.g. React, Node.js, MongoDB"
+              placeholder="Skills (React, Node.js, MongoDB)"
               value={formData.skills}
               onChange={handleChange}
             />
 
             <Input
               name="github"
-              placeholder="Github URL"
+              placeholder="GitHub URL"
               value={formData.github}
               onChange={handleChange}
             />
@@ -190,7 +240,9 @@ export default function CreateStudentPage() {
               className="w-full"
               disabled={loading}
             >
-              {loading ? "Creating..." : "Create Student"}
+              {loading
+                ? "Creating..."
+                : "Create User"}
             </Button>
           </form>
         </CardContent>

@@ -5,7 +5,7 @@ import { Project, ProjectInput } from "@/types/project";
 // GET ALL PROJECTS
 export const getAllProjects = async (): Promise<Project[]> => {
   const res = await api.get("/projects");
-  return res.data;
+  return res.data.projects;
 };
 
 // GET PROJECT BY ID
@@ -13,7 +13,7 @@ export const getProjectById = async (
   id: string
 ): Promise<Project> => {
   const res = await api.get(`/projects/${id}`);
-  return res.data;
+  return res.data.project;
 };
 
 // CREATE PROJECT
@@ -33,7 +33,7 @@ export const createProject = async (
     },
   });
 
-  return res.data;
+  return res.data.project;
 };
 
 // UPDATE PROJECT
@@ -52,21 +52,19 @@ export const updateProject = async (
   const res = await api.put(`/projects/${id}`, projectData, {
     headers: {
       Authorization: `Bearer ${token}`,
-      ...(isFormData
-        ? {
-            "Content-Type": "multipart/form-data",
-          }
-        : {}),
+      ...(isFormData && {
+        "Content-Type": "multipart/form-data",
+      }),
     },
   });
 
-  return res.data;
+  return res.data.project;
 };
 
 // DELETE PROJECT
 export const deleteProject = async (
   id: string
-): Promise<Project> => {
+) => {
   const token = getToken();
 
   if (!token) {

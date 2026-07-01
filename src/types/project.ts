@@ -1,17 +1,15 @@
-import { Student } from "./student";
+import { User } from "./user";
 
 export interface Project {
   _id: string;
   title: string;
   description: string;
-  techStack?: string[] | string;
-  githubLink?: string;
-  liveLink?: string;
-  githubUrl?: string;
-  liveDemoUrl?: string;
   screenshot?: string;
-  isFeatured?: boolean;
-  student?: Student | string;
+  techStack: string[];
+  githubUrl: string;
+  liveDemoUrl: string;
+  user: User | string;
+  isFeatured: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -19,12 +17,10 @@ export interface Project {
 export interface ProjectInput {
   title: string;
   description: string;
-  techStack?: string[] | string;
-  githubLink?: string;
-  liveLink?: string;
-  githubUrl?: string;
-  liveDemoUrl?: string;
   screenshot?: File | string | null;
-  isFeatured?: boolean;
-  student?: string;
+  techStack: string[];
+  githubUrl: string;
+  liveDemoUrl: string;
+  user?: string;
+  isFeatured: boolean;
 }

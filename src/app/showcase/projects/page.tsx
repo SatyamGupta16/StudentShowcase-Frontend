@@ -69,7 +69,7 @@ export default function ShowcaseProjectsPage() {
     if (!query) return projects;
 
     return projects.filter((project) => {
-      const student = getStudent(project.student);
+      const student = getStudent(project.user);
       const techStack = getTechStack(project.techStack).join(" ");
 
       const searchableText = [
@@ -191,7 +191,7 @@ export default function ShowcaseProjectsPage() {
           </div>
 
           <button
-            onClick={() => router.push("/showcase/students")}
+            onClick={() => router.push("/showcase/users")}
             className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium transition hover:bg-white"
           >
             View Student Profiles →
@@ -221,7 +221,7 @@ export default function ShowcaseProjectsPage() {
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {filteredProjects.map((project) => {
-              const student = getStudent(project.student);
+              const student = getStudent(project.user);
               const techStack = getTechStack(project.techStack);
 
               return (
@@ -354,7 +354,7 @@ export default function ShowcaseProjectsPage() {
                       {student?._id && (
                         <button
                           onClick={() =>
-                            router.push(`/showcase/students/${student._id}`)
+                            router.push(`/showcase/users/${student._id}`)
                           }
                           className="rounded-lg border border-purple-600 px-4 py-2 text-sm text-purple-600 transition hover:bg-purple-50"
                         >

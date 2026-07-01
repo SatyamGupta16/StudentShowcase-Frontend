@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import Navbar from "@/components/layout/Navbar";
-import { getAllStudents } from "@/services/studentService";
+import { getAllUsers } from "@/services/userService";
 
 import { Student } from "@/types/student";
 
@@ -85,7 +85,7 @@ export default function ShowcaseStudentsPage() {
 
   const fetchStudents = useCallback(async () => {
     try {
-      const data = await getAllStudents();
+      const data = await getAllUsers();
 
       console.log("SHOWCASE STUDENTS:", data);
 
@@ -284,7 +284,7 @@ export default function ShowcaseStudentsPage() {
                   <div className="mt-6 flex flex-wrap gap-3">
                     <button
                       onClick={() =>
-                        router.push(`/showcase/students/${student._id}`)
+                        router.push(`/showcase/users/${student._id}`)
                       }
                       className="rounded-lg bg-purple-600 px-4 py-2 text-sm text-white transition hover:bg-purple-700"
                     >

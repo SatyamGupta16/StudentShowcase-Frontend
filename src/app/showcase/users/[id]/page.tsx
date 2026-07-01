@@ -5,12 +5,11 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import Navbar from "@/components/layout/Navbar";
-import { getStudentById } from "@/services/studentService";
+import { getUserById } from "@/services/userService";
 import { getAllProjects } from "@/services/projectService";
 
-import { Student } from "@/types/student";
+import { User } from "@/types/user";
 import { Project } from "@/types/project";
-
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:27017";
 
@@ -20,7 +19,7 @@ export default function StudentProfilePage() {
 
   const studentId = params.id as string;
 
-  const [student, setStudent] = useState<Student | null>(null);
+  const [student, setStudent] = useState<User | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -66,20 +65,20 @@ export default function StudentProfilePage() {
 
   const fetchStudentProfile = useCallback(async () => {
     try {
-      const studentData = await getStudentById(studentId);
+      const studentData = await getUserById(studentId);
       const projectsData = await getAllProjects();
 
-      const studentProjects = projectsData.filter((project) => {
-        const projectStudentId =
-          typeof project.student === "string"
-            ? project.student
-            : project.student?._id;
+      const userProjects = projectsData.filter((project: Project) => {
+        const projectUserId =
+          typeof project.user === "string"
+            ? project.user
+            : project.user?._id;
 
-        return projectStudentId === studentId;
+        return projectUserId === studentId;
       });
 
       setStudent(studentData);
-      setProjects(studentProjects);
+      setProjects(userProjects);
     } catch (error) {
       console.error("STUDENT PROFILE ERROR:", error);
       alert("Failed to load student profile");
@@ -124,7 +123,7 @@ export default function StudentProfilePage() {
 
       <section className="mx-auto max-w-7xl px-6 py-12">
         <button
-          onClick={() => router.push("/showcase/students")}
+          onClick={() => router.push("/showcase/users")}
           className="mb-8 rounded-lg border px-4 py-2 text-sm transition hover:bg-white"
         >
           ← Back to Students

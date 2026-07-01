@@ -5,15 +5,15 @@ import { useRouter } from "next/navigation";
 
 import AdminGuard from "@/components/auth/AdminGuard";
 
-import { getAllStudents } from "@/services/studentService";
+import { getAllUsers } from "@/services/userService";
 import { createProject } from "@/services/projectService";
 
-import { Student } from "@/types/student";
+import { User } from "@/types/user";
 
 export default function CreateProjectPage() {
   const router = useRouter();
 
-  const [students, setStudents] = useState<Student[]>([]);
+  const [students, setStudents] = useState<User[]>([]);
   const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -23,17 +23,17 @@ export default function CreateProjectPage() {
     techStack: "",
     githubUrl: "",
     liveDemoUrl: "",
-    student: "",
+    user: "",
     isFeatured: false,
   });
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const data = await getAllStudents();
+        const data = await getAllUsers();
         setStudents(data);
       } catch (error) {
-        console.error("FETCH STUDENTS ERROR:", error);
+        console.error("FETCH USERS ERROR:", error);
       }
     };
 
@@ -70,7 +70,9 @@ export default function CreateProjectPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
 
     try {
@@ -79,11 +81,23 @@ export default function CreateProjectPage() {
       const projectData = new FormData();
 
       projectData.append("title", formData.title);
-      projectData.append("description", formData.description);
-      projectData.append("githubUrl", formData.githubUrl);
-      projectData.append("liveDemoUrl", formData.liveDemoUrl);
-      projectData.append("student", formData.student);
-      projectData.append("isFeatured", String(formData.isFeatured));
+      projectData.append(
+        "description",
+        formData.description
+      );
+      projectData.append(
+        "githubUrl",
+        formData.githubUrl
+      );
+      projectData.append(
+        "liveDemoUrl",
+        formData.liveDemoUrl
+      );
+      projectData.append("user", formData.user);
+      projectData.append(
+        "isFeatured",
+        String(formData.isFeatured)
+      );
 
       projectData.append(
         "techStack",
@@ -96,16 +110,22 @@ export default function CreateProjectPage() {
       );
 
       if (image) {
-        projectData.append("screenshot", image);
+        projectData.append(
+          "screenshot",
+          image
+        );
       }
 
       await createProject(projectData);
 
-      alert("Project Created Successfully");
+      alert("Project created successfully");
 
       router.push("/projects");
     } catch (error) {
-      console.error("CREATE PROJECT ERROR:", error);
+      console.error(
+        "CREATE PROJECT ERROR:",
+        error
+      );
 
       alert("Failed to create project");
     } finally {
@@ -123,7 +143,9 @@ export default function CreateProjectPage() {
 
           <button
             type="button"
-            onClick={() => router.push("/projects")}
+            onClick={() =>
+              router.push("/projects")
+            }
             className="rounded-lg border px-4 py-2 transition hover:bg-white"
           >
             Back
@@ -149,8 +171,8 @@ export default function CreateProjectPage() {
             placeholder="Project Description"
             value={formData.description}
             onChange={handleChange}
-            className="w-full rounded-lg border p-3"
             rows={4}
+            className="w-full rounded-lg border p-3"
             required
           />
 
@@ -197,16 +219,21 @@ export default function CreateProjectPage() {
           />
 
           <select
-            name="student"
-            value={formData.student}
+            name="user"
+            value={formData.user}
             onChange={handleChange}
             className="w-full rounded-lg border p-3"
             required
           >
-            <option value="">Select Student</option>
+            <option value="">
+              Select Student
+            </option>
 
             {students.map((student) => (
-              <option key={student._id} value={student._id}>
+              <option
+                key={student._id}
+                value={student._id}
+              >
                 {student.name}
               </option>
             ))}
@@ -226,7 +253,9 @@ export default function CreateProjectPage() {
             disabled={loading}
             className="w-full rounded-lg bg-purple-600 py-3 text-white transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading ? "Creating..." : "Create Project"}
+            {loading
+              ? "Creating..."
+              : "Create Project"}
           </button>
         </form>
       </div>

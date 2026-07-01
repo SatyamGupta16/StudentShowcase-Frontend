@@ -85,7 +85,11 @@ export default function EditProjectPage() {
       setUpdating(true);
 
       await updateProject(projectId, {
-        ...formData,
+        title: formData.title,
+        description: formData.description,
+        githubUrl: formData.githubUrl,
+        liveDemoUrl: formData.liveDemoUrl,
+        isFeatured: formData.isFeatured,
         techStack: formData.techStack
           .split(",")
           .map((tech) => tech.trim())

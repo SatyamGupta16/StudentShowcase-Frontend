@@ -100,7 +100,7 @@ export default function PublicProjectDetailPage() {
     );
   }
 
-  const student = getStudent(project.student);
+  const student = getStudent(project.user);
   const techStack = getTechStack(project.techStack);
 
   return (
@@ -244,7 +244,7 @@ export default function PublicProjectDetailPage() {
               {student?._id && (
                 <button
                   onClick={() =>
-                    router.push(`/showcase/students/${student._id}`)
+                    router.push(`/showcase/users/${student._id}`)
                   }
                   className="rounded-lg bg-purple-600 px-6 py-3 text-white transition hover:bg-purple-700"
                 >

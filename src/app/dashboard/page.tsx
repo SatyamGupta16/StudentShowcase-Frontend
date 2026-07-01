@@ -6,11 +6,11 @@ import { useRouter } from "next/navigation";
 import AdminGuard from "@/components/auth/AdminGuard";
 
 import { removeToken } from "@/utils/storage";
-import { getAllStudents } from "@/services/studentService";
+import { getAllUsers } from "@/services/userService";
 import { getAllProjects } from "@/services/projectService";
 import { getAllProducts } from "@/services/productService";
 
-import { Student } from "@/types/student";
+import { User } from "@/types/user";
 import { Project } from "@/types/project";
 import { Product } from "@/types/product";
 
@@ -23,10 +23,14 @@ import {
 
 import { Button } from "@/components/ui/button";
 
+type UserWithYear = User & {
+  year?: string;
+};
+
 export default function DashboardPage() {
   const router = useRouter();
 
-  const [students, setStudents] = useState<Student[]>([]);
+  const [students, setStudents] = useState<UserWithYear[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
 
@@ -36,17 +40,36 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [studentsData, projectsData, productsData] = await Promise.all([
-          getAllStudents(),
-          getAllProjects(),
-          getAllProducts(),
-        ]);
+        setLoading(true);
+        setError("");
 
-        setStudents(studentsData);
-        setProjects(projectsData);
-        setProducts(productsData);
+        const studentsData = await getAllUsers();
+        const projectsData = await getAllProjects();
+        const productsData = await getAllProducts();
+
+        setStudents(
+          Array.isArray(studentsData)
+            ? (studentsData as UserWithYear[])
+            : []
+        );
+
+        setProjects(
+          Array.isArray(projectsData)
+            ? projectsData
+            : []
+        );
+
+        setProducts(
+          Array.isArray(productsData)
+            ? productsData
+            : []
+        );
       } catch (err) {
         console.error("DASHBOARD DATA ERROR:", err);
+
+        setStudents([]);
+        setProjects([]);
+        setProducts([]);
         setError("Failed to load dashboard data");
       } finally {
         setLoading(false);
@@ -57,9 +80,17 @@ export default function DashboardPage() {
   }, []);
 
   const stats = useMemo(() => {
-    const featuredStudents = students.filter((student) => student.isFeatured);
-    const featuredProjects = projects.filter((project) => project.isFeatured);
-    const featuredProducts = products.filter((product) => product.isFeatured);
+    const featuredStudents = students.filter(
+      (student) => student.isFeatured
+    );
+
+    const featuredProjects = projects.filter(
+      (project) => project.isFeatured
+    );
+
+    const featuredProducts = products.filter(
+      (product) => product.isFeatured
+    );
 
     return {
       totalStudents: students.length,
@@ -85,6 +116,7 @@ export default function DashboardPage() {
 
   const handleLogout = () => {
     removeToken();
+    localStorage.removeItem("user");
     router.push("/login");
   };
 
@@ -101,8 +133,16 @@ export default function DashboardPage() {
   if (error) {
     return (
       <AdminGuard>
-        <div className="flex min-h-screen items-center justify-center text-red-500">
-          {error}
+        <div className="flex min-h-screen flex-col items-center justify-center gap-4">
+          <p className="text-red-500">
+            {error}
+          </p>
+
+          <Button
+            onClick={() => window.location.reload()}
+          >
+            Try Again
+          </Button>
         </div>
       </AdminGuard>
     );
@@ -112,6 +152,7 @@ export default function DashboardPage() {
     <AdminGuard>
       <div className="min-h-screen bg-slate-50">
         <div className="mx-auto max-w-7xl p-8">
+          {/* Header */}
           <div className="mb-10 flex flex-col justify-between gap-5 md:flex-row md:items-center">
             <div>
               <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-purple-600">
@@ -123,8 +164,7 @@ export default function DashboardPage() {
               </h1>
 
               <p className="mt-2 text-muted-foreground">
-                Manage students, projects, creations and featured showcase
-                content.
+                Manage users, projects, creations and featured showcase content.
               </p>
             </div>
 
@@ -136,15 +176,19 @@ export default function DashboardPage() {
                 View Website
               </Button>
 
-              <Button variant="destructive" onClick={handleLogout}>
+              <Button
+                variant="destructive"
+                onClick={handleLogout}
+              >
                 Logout
               </Button>
             </div>
           </div>
 
+          {/* Stats */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <Card
-              onClick={() => router.push("/students")}
+              onClick={() => router.push("/users")}
               className="cursor-pointer transition hover:scale-[1.02] hover:shadow-xl"
             >
               <CardHeader>
@@ -207,6 +251,7 @@ export default function DashboardPage() {
             </Card>
           </div>
 
+          {/* Quick Actions */}
           <div className="mt-10 rounded-2xl bg-white p-6 shadow">
             <div className="mb-5 flex flex-col justify-between gap-2 md:flex-row md:items-center">
               <div>
@@ -221,64 +266,73 @@ export default function DashboardPage() {
             </div>
 
             <div className="flex flex-wrap gap-4">
-              <Button
-                className="bg-purple-600 hover:bg-purple-700"
-                onClick={() => router.push("/students/create")}
+              <button
+                onClick={() => router.push("/users/create")}
+                className="rounded-lg bg-purple-600 px-5 py-3 text-white transition hover:bg-purple-700"
               >
                 Add Student
-              </Button>
+              </button>
 
-              <Button
-                variant="outline"
-                onClick={() => router.push("/students")}
+              <button
+                onClick={() => router.push("/users")}
+                className="rounded-lg border px-5 py-3 transition hover:bg-white"
               >
                 View Students
-              </Button>
+              </button>
 
-              <Button
-                className="bg-blue-600 hover:bg-blue-700"
+              <button
                 onClick={() => router.push("/projects/create")}
+                className="rounded-lg bg-blue-600 px-5 py-3 text-white transition hover:bg-blue-700"
               >
                 Add Project
-              </Button>
+              </button>
 
-              <Button
-                variant="outline"
+              <button
                 onClick={() => router.push("/projects")}
+                className="rounded-lg border px-5 py-3 transition hover:bg-white"
               >
                 View Projects
-              </Button>
+              </button>
 
-              <Button
-                className="bg-green-600 hover:bg-green-700"
+              <button
                 onClick={() => router.push("/products/create")}
+                className="rounded-lg bg-green-600 px-5 py-3 text-white transition hover:bg-green-700"
               >
                 Add Creation
-              </Button>
+              </button>
 
-              <Button
-                variant="outline"
+              <button
                 onClick={() => router.push("/products")}
+                className="rounded-lg border px-5 py-3 transition hover:bg-white"
               >
                 View Creations
-              </Button>
+              </button>
             </div>
           </div>
 
+          {/* Recent Data */}
           <div className="mt-12 grid gap-6 lg:grid-cols-3">
             <Card>
               <CardHeader>
-                <CardTitle>Recent Students</CardTitle>
+                <CardTitle>
+                  Recent Students
+                </CardTitle>
               </CardHeader>
 
               <CardContent className="space-y-4">
                 {recentStudents.length === 0 ? (
-                  <p className="text-gray-500">No students found</p>
+                  <p className="text-gray-500">
+                    No students found
+                  </p>
                 ) : (
                   recentStudents.map((student) => (
                     <button
-                      key={student._id}
-                      onClick={() => router.push(`/students/${student._id}`)}
+                      key={student._id || student.id}
+                      onClick={() =>
+                        router.push(
+                          `/users/${student._id || student.id}`
+                        )
+                      }
                       className="w-full rounded-xl border p-4 text-left transition hover:bg-slate-50"
                     >
                       <div className="flex items-center justify-between gap-4">
@@ -304,17 +358,23 @@ export default function DashboardPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Recent Projects</CardTitle>
+                <CardTitle>
+                  Recent Projects
+                </CardTitle>
               </CardHeader>
 
               <CardContent className="space-y-4">
                 {recentProjects.length === 0 ? (
-                  <p className="text-gray-500">No projects found</p>
+                  <p className="text-gray-500">
+                    No projects found
+                  </p>
                 ) : (
                   recentProjects.map((project) => (
                     <button
                       key={project._id}
-                      onClick={() => router.push(`/projects/${project._id}`)}
+                      onClick={() =>
+                        router.push(`/projects/${project._id}`)
+                      }
                       className="w-full rounded-xl border p-4 text-left transition hover:bg-slate-50"
                     >
                       <h3 className="font-semibold">
@@ -338,17 +398,23 @@ export default function DashboardPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Recent Creations</CardTitle>
+                <CardTitle>
+                  Recent Creations
+                </CardTitle>
               </CardHeader>
 
               <CardContent className="space-y-4">
                 {recentProducts.length === 0 ? (
-                  <p className="text-gray-500">No creations found</p>
+                  <p className="text-gray-500">
+                    No creations found
+                  </p>
                 ) : (
                   recentProducts.map((product) => (
                     <button
                       key={product._id}
-                      onClick={() => router.push(`/products/${product._id}`)}
+                      onClick={() =>
+                        router.push(`/products/${product._id}`)
+                      }
                       className="w-full rounded-xl border p-4 text-left transition hover:bg-slate-50"
                     >
                       <div className="flex items-center justify-between gap-4">
@@ -363,7 +429,9 @@ export default function DashboardPage() {
                         </div>
 
                         <span className="rounded-full bg-green-100 px-3 py-1 text-sm text-green-600">
-                          {product.price ? `₹${product.price}` : "Portfolio"}
+                          {product.price
+                            ? `₹${product.price}`
+                            : "Portfolio"}
                         </span>
                       </div>
 

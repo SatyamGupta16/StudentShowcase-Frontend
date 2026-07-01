@@ -1,28 +1,40 @@
 import api from "@/lib/api";
 import { getToken } from "@/utils/storage";
+import { Product } from "@/types/product";
 
 // GET ALL PRODUCTS
-export const getAllProducts = async () => {
+export const getAllProducts = async (): Promise<Product[]> => {
   const res = await api.get("/products");
   return res.data;
 };
 
 // GET PRODUCT BY ID
-export const getProductById = async (id: string) => {
+export const getProductById = async (
+  id: string
+): Promise<Product> => {
   const res = await api.get(`/products/${id}`);
   return res.data;
 };
 
 // CREATE PRODUCT
-export const createProduct = async (productData: FormData) => {
+export const createProduct = async (
+  productData: FormData
+) => {
   const token = getToken();
 
-  const res = await api.post("/products", productData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  if (!token) {
+    throw new Error("No token found");
+  }
+
+  const res = await api.post(
+    "/products",
+    productData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   return res.data;
 };
@@ -34,19 +46,32 @@ export const updateProduct = async (
 ) => {
   const token = getToken();
 
-  const res = await api.put(`/products/${id}`, productData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  if (!token) {
+    throw new Error("No token found");
+  }
+
+  const res = await api.put(
+    `/products/${id}`,
+    productData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   return res.data;
 };
 
 // DELETE PRODUCT
-export const deleteProduct = async (id: string) => {
+export const deleteProduct = async (
+  id: string
+) => {
   const token = getToken();
+
+  if (!token) {
+    throw new Error("No token found");
+  }
 
   const res = await api.delete(`/products/${id}`, {
     headers: {

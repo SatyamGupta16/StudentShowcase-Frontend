@@ -12,6 +12,7 @@ import {
 } from "@/services/projectService";
 
 import { Project } from "@/types/project";
+import { User } from "@/types/user";
 
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:27017";
@@ -41,13 +42,13 @@ export default function ProjectsPage() {
       const data = await getAllProjects();
 
       console.log("PROJECTS API RESPONSE:", data);
-      console.log("FIRST PROJECT STUDENT:", data?.[0]?.student);
+      console.log("FIRST PROJECT user:", data?.[0]?.user);
 
       console.log(
-        "ALL PROJECT STUDENTS:",
-        data.map((project) => ({
+        "ALL PROJECT USERS:",
+        data.map((project: Project) => ({
           title: project.title,
-          student: project.student,
+          user: project.user,
         }))
       );
 
@@ -77,36 +78,36 @@ export default function ProjectsPage() {
 
       fetchProjects();
     } catch (error) {
-      console.error(error);
+      console.error("DELETE PROJECT ERROR:", error);
       alert("Failed to delete project");
     }
   };
 
-  const getStudentName = (project: Project) => {
+  const getUserName = (project: Project) => {
     if (
-      project.student &&
-      typeof project.student === "object" &&
-      "name" in project.student
+      project.user &&
+      typeof project.user === "object"
     ) {
-      return project.student.name;
+      return (project.user as User).name;
     }
 
-    return "Unknown Student";
+    return "Unknown User";
   };
 
-  const getStudentEmail = (project: Project) => {
+  const getUserEmail = (project: Project) => {
     if (
-      project.student &&
-      typeof project.student === "object" &&
-      "email" in project.student
+      project.user &&
+      typeof project.user === "object"
     ) {
-      return project.student.email;
+      return (project.user as User).email;
     }
 
     return "";
   };
 
-  const getTechStack = (techStack?: string[] | string) => {
+  const getTechStack = (
+    techStack?: string[] | string
+  ) => {
     if (!techStack) return [];
 
     if (Array.isArray(techStack)) {
@@ -134,10 +135,12 @@ export default function ProjectsPage() {
       <div className="mx-auto max-w-7xl p-8">
         <div className="mb-10 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold">Projects</h1>
+            <h1 className="text-4xl font-bold">
+              Projects
+            </h1>
 
             <p className="mt-2 text-gray-500">
-              Manage all student projects
+              Manage all user projects
             </p>
           </div>
 
@@ -147,7 +150,9 @@ export default function ProjectsPage() {
             </span>
 
             <button
-              onClick={() => router.push("/projects/create")}
+              onClick={() =>
+                router.push("/projects/create")
+              }
               className="rounded-lg bg-purple-600 px-5 py-3 text-white transition hover:bg-purple-700"
             >
               Add Project
@@ -157,13 +162,19 @@ export default function ProjectsPage() {
 
         {projects.length === 0 ? (
           <div className="rounded-xl border bg-white p-10 text-center">
-            <p className="text-gray-500">No projects found.</p>
+            <p className="text-gray-500">
+              No projects found.
+            </p>
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {projects.map((project) => {
-              const techStack = getTechStack(project.techStack);
-              const studentEmail = getStudentEmail(project);
+              const techStack = getTechStack(
+                project.techStack
+              );
+
+              const userEmail =
+                getUserEmail(project);
 
               return (
                 <div
@@ -172,7 +183,9 @@ export default function ProjectsPage() {
                 >
                   {project.screenshot ? (
                     <Image
-                      src={getProjectImageUrl(project.screenshot)}
+                      src={getProjectImageUrl(
+                        project.screenshot
+                      )}
                       alt={project.title}
                       width={600}
                       height={400}
@@ -195,7 +208,9 @@ export default function ProjectsPage() {
                       </span>
                     )}
 
-                    <h2 className="text-xl font-bold">{project.title}</h2>
+                    <h2 className="text-xl font-bold">
+                      {project.title}
+                    </h2>
 
                     <p className="mt-2 line-clamp-3 text-sm text-gray-600">
                       {project.description}
@@ -207,33 +222,37 @@ export default function ProjectsPage() {
                       </p>
 
                       <p className="mt-1 font-medium">
-                        {getStudentName(project)}
+                        {getUserName(project)}
                       </p>
 
-                      {studentEmail && (
+                      {userEmail && (
                         <p className="text-sm text-gray-500">
-                          {studentEmail}
+                          {userEmail}
                         </p>
                       )}
                     </div>
 
                     {techStack.length > 0 && (
                       <div className="mt-4 flex flex-wrap gap-2">
-                        {techStack.map((tech, index) => (
-                          <span
-                            key={`${tech}-${index}`}
-                            className="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-700"
-                          >
-                            {tech}
-                          </span>
-                        ))}
+                        {techStack.map(
+                          (tech, index) => (
+                            <span
+                              key={`${tech}-${index}`}
+                              className="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-700"
+                            >
+                              {tech}
+                            </span>
+                          )
+                        )}
                       </div>
                     )}
 
                     <div className="mt-6 flex flex-wrap gap-3">
                       <button
                         onClick={() =>
-                          router.push(`/projects/${project._id}`)
+                          router.push(
+                            `/projects/${project._id}`
+                          )
                         }
                         className="rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
                       >
@@ -241,7 +260,9 @@ export default function ProjectsPage() {
                       </button>
 
                       <button
-                        onClick={() => handleDelete(project._id)}
+                        onClick={() =>
+                          handleDelete(project._id)
+                        }
                         className="rounded-lg bg-red-600 px-4 py-2 text-white transition hover:bg-red-700"
                       >
                         Delete
