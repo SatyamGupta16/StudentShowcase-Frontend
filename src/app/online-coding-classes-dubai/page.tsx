@@ -141,7 +141,26 @@ export default function OnlineCodingClassesDubaiPage() {
               >
                 Explore Student Profiles
               </Link>
+
+              <a
+                href="https://wa.me/919997919967"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-xl bg-green-500 px-7 py-4 font-semibold text-white transition hover:bg-green-600"
+              >
+                📱 Contact on WhatsApp
+              </a>
             </div>
+
+            <p className="mt-5 text-sm font-medium text-purple-100">
+              📱 Phone/WhatsApp:{" "}
+              <a
+                href="tel:+919997919967"
+                className="underline underline-offset-4 transition hover:text-white"
+              >
+                +91-999 791 9967
+              </a>
+            </p>
 
             <div className="mt-10 grid gap-4 text-sm text-purple-100 md:grid-cols-3">
               <div className="rounded-2xl bg-white/10 p-4 backdrop-blur">
@@ -301,6 +320,43 @@ export default function OnlineCodingClassesDubaiPage() {
         </div>
       </section>
 
+      {/* Contact Section */}
+      <section className="mx-auto max-w-6xl px-6 py-20">
+        <div className="rounded-3xl bg-white p-8 text-center shadow-xl md:p-12">
+          <p className="text-sm font-semibold uppercase tracking-wide text-purple-600">
+            Contact Us
+          </p>
+
+          <h2 className="mt-3 text-3xl font-bold md:text-5xl">
+            Want to Join Online Coding Classes?
+          </h2>
+
+          <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-gray-600">
+            Students and parents from Dubai or UAE can contact Prompt
+            Computer Classes for online coding classes, project guidance,
+            programming support, and student portfolio learning.
+          </p>
+
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <a
+              href="https://wa.me/919997919967"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-xl bg-green-500 px-7 py-4 font-semibold text-white transition hover:bg-green-600"
+            >
+              📱 Chat on WhatsApp
+            </a>
+
+            <a
+              href="tel:+919997919967"
+              className="rounded-xl border border-purple-200 px-7 py-4 font-semibold text-purple-700 transition hover:bg-purple-50"
+            >
+              Call: +91-999 791 9967
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Showcase Section */}
       <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-white to-purple-50 p-8 shadow-xl md:p-12">
@@ -385,7 +441,7 @@ export default function OnlineCodingClassesDubaiPage() {
           </div>
         </div>
       </section>
-
+      
       {/* SEO Text Section */}
       <section className="bg-white px-6 py-20">
         <div className="mx-auto max-w-5xl">
@@ -462,6 +518,22 @@ export default function OnlineCodingClassesDubaiPage() {
               profiles and projects through the public showcase pages.
             </p>
           </div>
+
+          <div className="rounded-2xl bg-white p-6 shadow">
+            <h3 className="font-bold">
+              How can students or parents contact Prompt Computer Classes?
+            </h3>
+            <p className="mt-2 leading-7 text-gray-600">
+              Students and parents can contact through Phone/WhatsApp at{" "}
+              <a
+                href="tel:+919997919967"
+                className="font-semibold text-purple-600 underline underline-offset-4"
+              >
+                +91-999 791 9967
+              </a>
+              .
+            </p>
+          </div>
         </div>
       </section>
 
@@ -491,7 +563,26 @@ export default function OnlineCodingClassesDubaiPage() {
             >
               View Students
             </Link>
+
+            <a
+              href="https://wa.me/919997919967"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-xl bg-green-500 px-7 py-4 font-semibold text-white transition hover:bg-green-600"
+            >
+              Contact on WhatsApp
+            </a>
           </div>
+
+          <p className="mt-6 text-base font-semibold text-purple-100">
+            📱 Phone/WhatsApp:{" "}
+            <a
+              href="tel:+919997919967"
+              className="underline underline-offset-4 transition hover:text-white"
+            >
+              +91-999 791 9967
+            </a>
+          </p>
         </div>
       </section>
     </main>
