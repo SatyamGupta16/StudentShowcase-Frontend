@@ -29,7 +29,10 @@ export default function Footer() {
           </h3>
 
           <div className="mt-4 flex flex-col gap-3 text-sm text-gray-600">
-            <Link href="/" className="transition hover:text-purple-600">
+            <Link
+              href="/"
+              className="transition hover:text-purple-600"
+            >
               Home
             </Link>
 
@@ -60,6 +63,13 @@ export default function Footer() {
             >
               Creations
             </Link>
+
+            <Link
+              href="/online-coding-classes-dubai"
+              className="transition hover:text-purple-600"
+            >
+              Online Classes
+            </Link>
           </div>
         </div>
 
@@ -84,6 +94,21 @@ export default function Footer() {
             <span className="rounded-full bg-gray-100 px-3 py-1 text-gray-700">
               MongoDB
             </span>
+          </div>
+
+          <div className="mt-6">
+            <h3 className="text-sm font-semibold text-gray-900">
+              Learning Programs
+            </h3>
+
+            <div className="mt-4 flex flex-col gap-3 text-sm text-gray-600">
+              <Link
+                href="/online-coding-classes-dubai"
+                className="transition hover:text-purple-600"
+              >
+                Online Coding Classes for Dubai Students
+              </Link>
+            </div>
           </div>
         </div>
       </div>
