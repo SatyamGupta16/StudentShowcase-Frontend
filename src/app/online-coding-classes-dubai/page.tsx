@@ -16,6 +16,11 @@ export const metadata = {
     "coding classes UAE students",
     "web development classes Dubai",
     "online computer classes Dubai",
+    "Python online classes Dubai",
+    "Java online classes Dubai",
+    "student portfolio Dubai",
+    "coding classes for kids Dubai",
+    "programming classes Dubai students",
   ],
 };
 
@@ -100,9 +105,180 @@ const benefits = [
   },
 ];
 
+const quickAnswers = [
+  {
+    question: "What are online coding classes for Dubai students?",
+    answer:
+      "Online coding classes for Dubai students are live programming sessions where school and college students can learn Python, Java, C, SQL, and web development from home with practical assignments, doubt support, and project-based learning.",
+  },
+  {
+    question: "Who can join these online programming classes?",
+    answer:
+      "School students, Class 11 and 12 learners, college students, BCA, MCA, B.Tech students, and complete beginners from Dubai or UAE can join these online programming classes.",
+  },
+  {
+    question: "Do students build real projects?",
+    answer:
+      "Yes. Students are encouraged to build practical projects and showcase them through a public student project showcase platform.",
+  },
+];
+
+const courseSchema = {
+  "@context": "https://schema.org",
+  "@type": "Course",
+  name: "Online Coding Classes for Dubai Students",
+  description:
+    "Live online coding classes for Dubai and UAE students to learn Python, Java, C, SQL, web development, and build real projects.",
+  provider: {
+    "@type": "EducationalOrganization",
+    name: "Prompt Computer Classes",
+    url: "https://student-showcase-frontend.vercel.app/",
+    telephone: "+91-9997919967",
+  },
+  areaServed: [
+    {
+      "@type": "Place",
+      name: "Dubai",
+    },
+    {
+      "@type": "Country",
+      name: "United Arab Emirates",
+    },
+  ],
+  educationalLevel: [
+    "School Students",
+    "College Students",
+    "Beginners",
+  ],
+  teaches: [
+    "Python Programming",
+    "Java Programming",
+    "C Programming",
+    "SQL",
+    "Web Development",
+    "Project-Based Learning",
+  ],
+  url: "https://student-showcase-frontend.vercel.app/online-coding-classes-dubai",
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  name: "Prompt Computer Classes",
+  url: "https://student-showcase-frontend.vercel.app/",
+  telephone: "+91-9997919967",
+  description:
+    "Prompt Computer Classes provides online coding classes, programming guidance, project support, and student project showcase opportunities.",
+  sameAs: [
+    "https://student-showcase-frontend.vercel.app/",
+  ],
+  areaServed: [
+    {
+      "@type": "Place",
+      name: "Dubai",
+    },
+    {
+      "@type": "Country",
+      name: "United Arab Emirates",
+    },
+    {
+      "@type": "Country",
+      name: "India",
+    },
+  ],
+};
+
+const webPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Online Coding Classes for Dubai Students",
+  description:
+    "A landing page for Dubai and UAE students looking for online coding classes in Python, Java, C, SQL, web development, and project-based learning.",
+  url: "https://student-showcase-frontend.vercel.app/online-coding-classes-dubai",
+  mainEntity: {
+    "@type": "Course",
+    name: "Online Coding Classes for Dubai Students",
+  },
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Are online coding classes available for Dubai students?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Dubai and UAE students can join live online coding classes by Prompt Computer Classes.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Which programming languages can Dubai students learn?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Students can learn Python, Java, C, SQL, web development, and project-based programming concepts.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Are these coding classes suitable for beginners?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. The classes are beginner-friendly and explain programming concepts step by step.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do students get project support?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Students get project guidance and can showcase their work through the student project showcase platform.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How can parents contact Prompt Computer Classes?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Parents can contact Prompt Computer Classes through Phone or WhatsApp at +91-999 791 9967.",
+      },
+    },
+  ],
+};
+
 export default function OnlineCodingClassesDubaiPage() {
   return (
     <main className="min-h-screen bg-slate-50 text-gray-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(courseSchema),
+        }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationSchema),
+        }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(webPageSchema),
+        }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema),
+        }}
+      />
+
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-purple-950 via-purple-800 to-blue-900 px-6 py-24 text-white">
         <div className="absolute inset-0 opacity-20">
@@ -173,6 +349,36 @@ export default function OnlineCodingClassesDubaiPage() {
                 ✅ Beginner-Friendly Teaching
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* AEO Quick Answer Section */}
+      <section className="bg-slate-50 px-6 py-16">
+        <div className="mx-auto max-w-6xl rounded-3xl bg-white p-8 shadow-lg md:p-12">
+          <p className="text-sm font-semibold uppercase tracking-wide text-purple-600">
+            Quick Answers
+          </p>
+
+          <h2 className="mt-3 text-3xl font-bold md:text-4xl">
+            Online Coding Classes for Dubai Students — Quick Guide
+          </h2>
+
+          <div className="mt-8 grid gap-6 md:grid-cols-3">
+            {quickAnswers.map((item) => (
+              <div
+                key={item.question}
+                className="rounded-2xl bg-slate-50 p-6"
+              >
+                <h3 className="font-bold text-gray-950">
+                  {item.question}
+                </h3>
+
+                <p className="mt-3 leading-7 text-gray-600">
+                  {item.answer}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -506,6 +712,16 @@ export default function OnlineCodingClassesDubaiPage() {
             <p className="mt-2 leading-7 text-gray-600">
               Yes. The classes are beginner-friendly and designed to
               explain programming concepts step by step.
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-white p-6 shadow">
+            <h3 className="font-bold">
+              Do students get project support?
+            </h3>
+            <p className="mt-2 leading-7 text-gray-600">
+              Yes. Students get project guidance and can showcase their
+              projects through the public student project showcase.
             </p>
           </div>
 
